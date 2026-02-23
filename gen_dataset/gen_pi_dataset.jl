@@ -1,6 +1,8 @@
 using BFloat16s
 using Distributions
 using Random
+using Plots
+using StatsBase
 
 function gen_pi_dataset(n ::Int64)
 
@@ -48,22 +50,47 @@ function write_data(filename ::String, arr ::Vector{Tuple{BFloat16, Int64}})
 end
 
 
+function plot_data(arr ::Array{BFloat16})
+
+    dataset = zeros(Float64, length(arr))
+
+    n_intervals = 50
+
+    map!(x -> Float64(x), arr, dataset)
+
+    bins = minimum(dataset):0.25:maximum(dataset)
+
+    hist = fit(Histogram, dataset, bins)
+
+    bar_chart = plot(hist, legend=false, xlabel="Value", ylabel="Frequency", title="Bar Chart of Intervals and Frequencies")
+
+    savefig(bar_chart, "bar_chart.png")
+
+    savefig(bar_chart, "bar_chart.pdf")
+
+    savefig(bar_chart, "bar_chart.svg")
+    
+end
+
+
 function main()
 
-    q = 2000
+    q = 500
 
     valid_pi, invalid_pi_below, invalid_pi_above = gen_pi_dataset(q)
 
     if minimum(invalid_pi_above) > maximum(valid_pi) && minimum(valid_pi) > maximum(invalid_pi_below)
 
-        println("writing data")
+        plot_data(vcat(invalid_pi_above, valid_pi, invalid_pi_below))
 
-        write_data("pi_dataset.txt", vcat(
-            collect(zip(invalid_pi_above, zeros(Int, q))),
-            collect(zip(valid_pi, ones(Int, q * 2))),
-            collect(zip(invalid_pi_below, zeros(Int, q)))
-        )
-                   )
+        # println("writing data")
+
+        # write_data("pi_dataset.txt", vcat(
+        #     collect(zip(invalid_pi_above, zeros(Int, q))),
+        #     collect(zip(valid_pi, ones(Int, q * 2))),
+        #     collect(zip(invalid_pi_below, zeros(Int, q)))
+        # )
+        #            )
 
     end
 
