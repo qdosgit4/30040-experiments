@@ -22,11 +22,11 @@ function gen_pi_dataset(n ::Int64)
 
     gaussian_2 = Normal(0.0, 1)
 
-    # map!(x -> pi_bf + rand(gaussian), valid_pi, valid_pi)
+    map!(x -> pi_bf + rand(gaussian), valid_pi, valid_pi)
 
-    map!(x -> pi_bf + (range*5 + abs(rand(gaussian_2))), invalid_pi_above, invalid_pi_above)
+    map!(x -> pi_bf + (range*10 + abs(rand(gaussian_2))), invalid_pi_above, invalid_pi_above)
 
-    map!(x -> pi_bf + (-1 * (range*5 + abs(rand(gaussian_2))) ), invalid_pi_below, invalid_pi_below )
+    map!(x -> pi_bf + (-1 * (range*10 + abs(rand(gaussian_2))) ), invalid_pi_below, invalid_pi_below )
 
     # println(valid_pi)
 
