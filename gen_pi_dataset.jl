@@ -33,13 +33,13 @@ function gen_pi_dataset(n ::Int64)
 end
 
 
-function write_data(filename ::String, arr ::Array{BFloat16, 1})
+function write_data(filename ::String, arr ::Vector{Tuple{BFloat16, Int64}})
     
-    open(filename, "a") do io
+    open(filename, "w") do io
         
-        for x in shuffle(arr)
-            
-            println(io, Float64(x))
+        for t in shuffle(arr)
+
+            println(io, Float64(t[1]), ",", t[2])
             
         end
         
@@ -50,13 +50,20 @@ end
 
 function main()
 
-    valid_pi, invalid_pi_below, invalid_pi_above = gen_pi_dataset(10000)
+    q = 10000
+
+    valid_pi, invalid_pi_below, invalid_pi_above = gen_pi_dataset(q)
 
     if minimum(invalid_pi_above) > maximum(valid_pi) && minimum(valid_pi) > maximum(invalid_pi_below)
 
         println("writing data")
 
-        write_data("pi_dataset.txt", vcat(invalid_pi_above, valid_pi, invalid_pi_below))
+        write_data("pi_dataset.txt", vcat(
+            collect(zip(invalid_pi_above, zeros(Int, q))),
+            collect(zip(valid_pi, ones(Int, q * 2))),
+            collect(zip(invalid_pi_below, zeros(Int, q)))
+        )
+                   )
 
     end
 
