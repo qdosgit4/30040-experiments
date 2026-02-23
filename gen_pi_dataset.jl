@@ -1,5 +1,6 @@
 using BFloat16s
 using Distributions
+using Random
 
 function gen_pi_dataset(n ::Int64)
 
@@ -36,7 +37,7 @@ function write_data(filename ::String, arr ::Array{BFloat16, 1})
     
     open(filename, "a") do io
         
-        for x in arr
+        for x in shuffle(arr)
             
             println(io, Float64(x))
             
