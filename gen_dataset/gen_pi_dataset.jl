@@ -52,13 +52,13 @@ end
 
 function plot_data(arr ::Array{BFloat16})
 
-    dataset = zeros(Float64, length(arr))
+    dataset = map!(x -> Float64(x), arr)
 
-    n_intervals = 50
-
-    map!(x -> Float64(x), arr, dataset)
+    # print(dataset)
 
     bins = minimum(dataset):0.25:maximum(dataset)
+
+    print(bins)
 
     hist = fit(Histogram, dataset, bins)
 
