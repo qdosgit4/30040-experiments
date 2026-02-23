@@ -56,7 +56,7 @@ function plot_data(arr ::Array{BFloat16})
 
     # print(dataset)
 
-    bins = minimum(dataset):0.25:maximum(dataset)
+    bins = minimum(dataset):0.05:maximum(dataset)
 
     print(bins)
 
