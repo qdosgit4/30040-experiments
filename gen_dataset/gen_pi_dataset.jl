@@ -20,7 +20,7 @@ function gen_pi_dataset(n ::Int64)
 
     gaussian = Normal(0.0, range)
 
-    gaussian_2 = Normal(0.0, 0.2)
+    gaussian_2 = Normal(0.0, 0.25)
 
     map!(x -> pi_bf + rand(gaussian), valid_pi, valid_pi)
 
@@ -75,7 +75,7 @@ end
 
 function main()
 
-    q = 500
+    q = 10000
 
     valid_pi, invalid_pi_below, invalid_pi_above = gen_pi_dataset(q)
 
