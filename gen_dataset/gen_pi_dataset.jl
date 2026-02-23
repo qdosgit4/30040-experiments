@@ -81,6 +81,8 @@ function main()
 
     if minimum(invalid_pi_above) > maximum(valid_pi) && minimum(valid_pi) > maximum(invalid_pi_below)
 
+        println("plotting data")
+
         plot_data(vcat(invalid_pi_above, valid_pi, invalid_pi_below))
 
         # println("writing data")
