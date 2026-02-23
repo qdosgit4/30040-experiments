@@ -20,13 +20,13 @@ function gen_pi_dataset(n ::Int64)
 
     gaussian = Normal(0.0, range)
 
-    gaussian_2 = Normal(0.0, 1)
+    gaussian_2 = Normal(0.0, 0.2)
 
     map!(x -> pi_bf + rand(gaussian), valid_pi, valid_pi)
 
-    map!(x -> pi_bf + (range*10 + abs(rand(gaussian_2))), invalid_pi_above, invalid_pi_above)
+    map!(x -> pi_bf + (range*5 + abs(rand(gaussian_2))), invalid_pi_above, invalid_pi_above)
 
-    map!(x -> pi_bf + (-1 * (range*10 + abs(rand(gaussian_2))) ), invalid_pi_below, invalid_pi_below )
+    map!(x -> pi_bf + (-1 * (range*5 + abs(rand(gaussian_2))) ), invalid_pi_below, invalid_pi_below )
 
     # println(valid_pi)
 
@@ -56,7 +56,7 @@ function plot_data(arr ::Array{BFloat16})
 
     # print(dataset)
 
-    bins = minimum(dataset):0.05:maximum(dataset)
+    bins = minimum(dataset):0.01:maximum(dataset)
 
     print(bins)
 
