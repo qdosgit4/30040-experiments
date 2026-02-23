@@ -62,7 +62,7 @@ function plot_data(arr ::Array{BFloat16})
 
     hist = fit(Histogram, dataset, bins)
 
-    bar_chart = plot(hist, legend=false, xlabel="Value", ylabel="Frequency", title="Bar Chart of Intervals and Frequencies")
+    bar_chart = plot(hist, legend=false, xlabel="Intervals", ylabel="Frequency", title="Bar chart to show frequencies of different values generated")
 
     savefig(bar_chart, "bar_chart.png")
 
