@@ -26,13 +26,17 @@ class GaussianLoss(_Loss):
 
         ##  The reduction is how each (x, y) sample's loss function
         ##  output is handled, when combined.
-        ##  'mean' removes dependency on ratios within dataset.
+        ##  'mean' removes dependency on ratios within dataset, by
+        ##  taking mean of loss function output (unlike 'sum').
 
-        ##  Input is the mean of the distribution, to be initialised randomly, then iterated.
+        ##  Input is the mean of the distribution, can be initialised
+        ##  randomly, then iterated.
 
-        ##  Target is the output of the model, to compare to the distribution parameters.
+        ##  Target is the output of the model, to compare to the
+        ##  distribution parameters.
 
-        ##  Var is to be initialised randomly, and then iterated.
+        ##  Var, distribution variance, can be initialised randomly,
+        ##  and then iterated.
         
         return F.gaussian_nll_loss(
             input, target, var, full=self.full, eps=self.eps, reduction=self.reduction

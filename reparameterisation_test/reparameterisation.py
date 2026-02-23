@@ -31,10 +31,38 @@ for batch_data, batch_labels in train_dataloader:
     print(batch_labels)
 
 
-v = 1
 
-mu = 5
-    
+v = torch.tensor([1],
+                 dtype = torch.bfloat16,
+                 requires_gradient = True)
+
+##  Start off mu at pi to speed up convergence.
+
+mu = torch.tensor(3.14159,
+                  dtype = torch.bfloat16,
+                  requires_gradient = True)
+
+
+##  Extract data using mask.
+
+batch_data_0 = batch_data[batch_labels == 0]
+
+batch_data_1 = batch_data[batch_labels == 1]
+
+
+
+loss_0 = nn.L1Loss()
+
 loss_1 = nn.GaussianLoss()
 
-loss_2 = nn.L1Loss()
+
+mu_n_0 = mu.repeat(batch_data_0.shape[0])
+
+mu_n_1 = mu.repeat(batch_data_1.shape[0])
+
+v_n_1 = mu.repeat(batch_data_1.shape[0])
+
+
+output = loss_0(mu_n_0, _data_0) + loss_1(mu_n_1, _data_1, v_n_1)
+
+output.backward()
