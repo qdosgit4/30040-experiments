@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class GaussianLoss(_Loss):
+
+    __constants__ = ["full", "eps", "reduction"]
+    full: bool
+    eps: float
+
+    
+    def __init__(self, *, full: bool = False, eps: float = 1e-6,
+                 reduction: str = "mean") -> None:
+        
+        super().__init__(None, None, reduction)
+        self.full = full
+        self.eps = eps
+
+        
+    def forward(self, input: Tensor, target: Tensor, var: Tensor | float) -> Tensor:
+        
+        ##  https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.gaussian_nll_loss.html
+
+        ##  The reduction is how each (x, y) sample's loss function
+        ##  output is handled, when combined.
+        ##  'mean' removes dependency on ratios within dataset.
+
+        ##  Input is the mean of the distribution, to be initialised randomly, then iterated.
+
+        ##  Target is the output of the model, to compare to the distribution parameters.
+
+        ##  Var is to be initialised randomly, and then iterated.
+        
+        return F.gaussian_nll_loss(
+            input, target, var, full=self.full, eps=self.eps, reduction=self.reduction
+        )
+
