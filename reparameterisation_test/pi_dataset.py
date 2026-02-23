@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 
-class PiDataset(Dataset):
+class Pi_dataset(Dataset):
 
     
     def __init__(self, filename):

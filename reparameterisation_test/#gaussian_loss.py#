@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class Gaussian_loss(_Loss):
+class Gaussianoss(_Loss):
 
     __constants__ = ["full", "eps", "reduction"]
     full: bool
