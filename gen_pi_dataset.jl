@@ -32,19 +32,35 @@ function gen_pi_dataset(n ::Int64)
 end
 
 
-valid_pi, invalid_pi_below, invalid_pi_above = gen_pi_dataset(10000)
+function write_data(filename ::String, arr ::Array{BFloat16, 1})
+    
+    open(filename, "a") do io
+        
+        for x in arr
+            
+            println(io, Float64(x))
+            
+        end
+        
+    end
 
-         
-         
-
-println(maximum(invalid_pi_above))
-println(minimum(invalid_pi_above))
-
-println(maximum(valid_pi))
-println(minimum(valid_pi))
+end
 
 
-println(maximum(invalid_pi_below))
-println(minimum(invalid_pi_below))
+function main()
 
+    valid_pi, invalid_pi_below, invalid_pi_above = gen_pi_dataset(10000)
+
+    if minimum(invalid_pi_above) > maximum(valid_pi) && minimum(valid_pi) > maximum(invalid_pi_below)
+
+        println("writing data")
+
+        write_data("pi_dataset.txt", vcat(invalid_pi_above, valid_pi, invalid_pi_below))
+
+    end
+
+end
+
+
+main()
 
