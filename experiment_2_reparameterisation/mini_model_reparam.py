@@ -11,10 +11,6 @@ class Linear_model(nn.Module):
     def __init__(self, n: int):
         
         super().__init__()
-        
-        v_loss = nn.Parameter(torch.Tensor([1]))
-
-        mu_loss = nn.Parameter(torch.Tensor([3.14159]))
 
         self.linear_relu_stack = nn.Sequential(
             Linear_gaussian_reparam(1, n),
@@ -41,7 +37,7 @@ class Linear_model(nn.Module):
         
         logits = self.linear_relu_stack(x)
 
-        # print(logits)
+        print(logits)
 
         out = torch.sigmoid(logits)
         

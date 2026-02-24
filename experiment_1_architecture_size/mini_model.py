@@ -10,10 +10,6 @@ class Linear_model(nn.Module):
         
         super().__init__()
         
-        v_loss = nn.Parameter(torch.Tensor([1]))
-
-        mu_loss = nn.Parameter(torch.Tensor([3.14159]))
-
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(1, n),
             nn.ReLU(),
