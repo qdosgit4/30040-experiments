@@ -3,6 +3,9 @@
 import argparse
 import time
 
+import numpy as np
+
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -45,8 +48,12 @@ test_dataloader = DataLoader(test_data, batch_size = batch_size_pi,
 
 model = Linear_model(args.neurons).to(device)
 
-# print(model.state_dict())
+##  Save model params to plaintext.
 
+with open("model_params_mu_weight_pre.txt", "w") as f:
+
+    f.write(str(model.state_dict()['linear_relu_stack.0.mu_weight']))
+    
 
 ##  Define loss.
 
@@ -89,8 +96,8 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
         optimizer.zero_grad()
 
         if batch % 10000 == 0:
-
-            # print(torch.stack([X, y, y_hat], dim=0).T)
+                  
+            print(torch.stack([X, y, y_hat], dim=0).T)
 
             # print(torch.round(y_hat), y)
 
@@ -133,12 +140,12 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
     print(f"{test_loss:>8f}")
             
             
-epochs = 5
+epochs = 2
 
-start_time = time.time()
+# start_time = time.time()
 
-while time.time() - start_time < 300:
-# for t in range(epochs):
+# while time.time() - start_time < 300:
+for t in range(epochs):
     
     # print(f"Epoch {t+1}\n-------------------------------")
     
@@ -146,7 +153,14 @@ while time.time() - start_time < 300:
     
     test(test_dataloader, model, loss_0)
 
-print(f"{time.time() - start_time}s")
+# print(f"{time.time() - start_time}s")
     
 # print(model.state_dict())
 
+
+##  Save model params to plaintext.
+
+with open("model_params_mu_weight_post.txt", "w") as f:
+
+    f.write(str(model.state_dict()['linear_relu_stack.0.mu_weight']))
+    

@@ -41,6 +41,8 @@ class Linear_model(nn.Module):
         
         logits = self.linear_relu_stack(x)
 
+        # print(logits)
+
         out = torch.sigmoid(logits)
         
         return out

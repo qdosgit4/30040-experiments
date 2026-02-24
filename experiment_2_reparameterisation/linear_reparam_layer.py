@@ -14,7 +14,7 @@ class Linear_gaussian_reparam(nn.Module):
                  prior_mean=0.25,
                  prior_variance=0,
                  posterior_mu_init=0.25,
-                 posterior_rho_init=0,
+                 posterior_rho_init=0.2,
                  bias=True):
         
         """
@@ -121,6 +121,40 @@ class Linear_gaussian_reparam(nn.Module):
         ##  self.quant_prepare=False
 
         
+    def init_parameters(self):
+
+        ##  Fill tensor with value.
+        
+        self.prior_weight_mu.fill_(self.prior_mean)
+        
+        self.prior_weight_sigma.fill_(self.prior_variance)
+
+        ##  Fill tensor with Gaussian distribution samples.
+        
+        self.mu_weight.data.normal_(mean=self.posterior_mu_init, std=0.1)
+        
+        self.rho_weight.data.normal_(mean=self.posterior_rho_init, std=0.1)
+
+        # print('----------------------------  MU')
+        # print(self.mu_weight)
+
+        # print('---------------------------- RHO')
+        # print(self.rho_weight)
+
+        ##  Repeat for bias values.
+        
+        if self.mu_bias is not None:
+            
+            self.prior_bias_mu.fill_(self.prior_mean)
+            
+            self.prior_bias_sigma.fill_(self.prior_variance)
+            
+            self.mu_bias.data.normal_(mean=self.posterior_mu_init, std=0.1)
+            
+            self.rho_bias.data.normal_(mean=self.posterior_rho_init,
+                                       std=0.1)
+
+        
     def prepare(self):
 
         ##  Quantization regards operating at a lower precision,
@@ -138,35 +172,7 @@ class Linear_gaussian_reparam(nn.Module):
     
     #     self.quant_prepare=True
 
-        
-    def init_parameters(self):
-
-        ##  Fill tensor with value.
-        
-        self.prior_weight_mu.fill_(self.prior_mean)
-        
-        self.prior_weight_sigma.fill_(self.prior_variance)
-
-        ##  Fill tensor with Gaussian distribution samples.
-        
-        self.mu_weight.data.normal_(mean=self.posterior_mu_init, std=0.1)
-        
-        self.rho_weight.data.normal_(mean=self.posterior_rho_init, std=0.1)
-
-        ##  Repeat for bias values.
-        
-        if self.mu_bias is not None:
-            
-            self.prior_bias_mu.fill_(self.prior_mean)
-            
-            self.prior_bias_sigma.fill_(self.prior_variance)
-            
-            self.mu_bias.data.normal_(mean=self.posterior_mu_init, std=0.1)
-            
-            self.rho_bias.data.normal_(mean=self.posterior_rho_init,
-                                       std=0.1)
-
-
+    
     def kl_loss(self):
 
         ##  Generate sigma for weight generation via trained parameter.
@@ -224,13 +230,17 @@ class Linear_gaussian_reparam(nn.Module):
 
         ##  Generate epsilon weight via Gaussian distribution, N(0, 1).
         
-        eps_weight = self.eps_weight.data.normal_()
+        eps_weight = self.eps_weight.data.normal_(mean=0, std=0.2)
 
         ##  Generate weight via sigma and epsilon weights.
         
         tmp_result = sigma_weight * eps_weight
         
         weight = self.mu_weight + tmp_result
+
+        print('------------------------------------------------------------  WEIGHTS GEN')
+        
+        print(weight)
 
         if return_kl:
 
