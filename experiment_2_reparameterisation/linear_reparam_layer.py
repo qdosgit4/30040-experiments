@@ -7,6 +7,8 @@ from torch import nn
 import torch.nn.functional as F
 from torch.nn import Module, Parameter
 
+torch.set_default_dtype(torch.bfloat16)
+
 class Linear_gaussian_reparam(nn.Module):
     def __init__(self,
                  in_features,
@@ -56,9 +58,9 @@ class Linear_gaussian_reparam(nn.Module):
         ##  This would usually be equivalent to the prior, but this allows a
         ##  pretrained drop-in.
         
-        self.posterior_mu_init = posterior_mu_init
+        ##  sigma = log (1 + exp(rho))
         
-        ##  variance of weight --> sigma = log (1 + exp(rho))
+        self.posterior_mu_init = posterior_mu_init
         
         self.posterior_rho_init = posterior_rho_init
         
@@ -72,7 +74,7 @@ class Linear_gaussian_reparam(nn.Module):
 
         ##  Register buffer: "data that is not a model parameter but
         ##  that is part of the module's state". E.g. during batch
-        ##  normalisation.
+        ##  normalisation, or calculating KL loss.
 
         ##  eps_weight is used to generate weights during forward
         ##  propagation.
@@ -244,9 +246,9 @@ class Linear_gaussian_reparam(nn.Module):
         
         weight = self.mu_weight #+ tmp_result
 
-        # print('------------------------------------------------------------  WEIGHTS GEN')
+        print('------------------------------------------------------------  WEIGHTS GEN')
         
-        # print(weight)
+        print(weight)
 
         if return_kl:
 

@@ -31,7 +31,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 
 ##  Load up data.
 
-batch_size_pi = 10
+batch_size_pi = 2
 
 train_data = Pi_dataset("pi_dataset_10000.txt")
 
