@@ -14,11 +14,17 @@ class Linear_gaussian_reparam(nn.Module):
                  prior_mean=0.25,
                  prior_variance=0,
                  posterior_mu_init=0.25,
-                 posterior_rho_init=0.2,
+                 posterior_rho_init=-10,
                  bias=True):
         
         """
         Implements Linear layer with reparameterisation.
+
+        Note that posterior_rho_init will generate sigma via:
+        ln(1 + exp(rho)) = sigma
+
+        And therefore:
+        rho = ln(exp(sigma)) - 1)
 
         Parameters:
             in_features: int -> size of each input sample,
@@ -131,7 +137,7 @@ class Linear_gaussian_reparam(nn.Module):
 
         ##  Fill tensor with Gaussian distribution samples.
         
-        self.mu_weight.data.normal_(mean=self.posterior_mu_init, std=0.1)
+        self.mu_weight.data.normal_(mean=self.posterior_mu_init, std=0)
         
         self.rho_weight.data.normal_(mean=self.posterior_rho_init, std=0.1)
 
@@ -230,17 +236,17 @@ class Linear_gaussian_reparam(nn.Module):
 
         ##  Generate epsilon weight via Gaussian distribution, N(0, 1).
         
-        eps_weight = self.eps_weight.data.normal_(mean=0, std=0.2)
+        eps_weight = self.eps_weight.data.normal_(mean=0, std=0.000)
 
         ##  Generate weight via sigma and epsilon weights.
         
         tmp_result = sigma_weight * eps_weight
         
-        weight = self.mu_weight + tmp_result
+        weight = self.mu_weight #+ tmp_result
 
-        print('------------------------------------------------------------  WEIGHTS GEN')
+        # print('------------------------------------------------------------  WEIGHTS GEN')
         
-        print(weight)
+        # print(weight)
 
         if return_kl:
 
