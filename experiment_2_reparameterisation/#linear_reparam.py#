@@ -150,6 +150,8 @@ class Linear_gaussian_reparam(nn.Module):
         self.mu_weight.data.normal_(mean=self.posterior_mu_init[0], std=0.1)
         
         self.rho_weight.data.normal_(mean=self.posterior_rho_init[0], std=0.1)
+
+        ##  Repeat for bias values.
         
         if self.mu_bias is not None:
             
