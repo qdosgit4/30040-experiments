@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import argparse
+import time
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -8,8 +11,11 @@ from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
 from mini_model import Linear_model
-from gaussian_loss import Gaussian_loss
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--neurons', type=int, help='Quantity of n neurons in 1-n-n-1 network.')
+args = parser.parse_args()
 
 ##  Initialisation.
 
@@ -37,7 +43,7 @@ test_dataloader = DataLoader(test_data, batch_size = batch_size_pi,
 
 ##  Define model.
 
-model = Linear_model(2048).to(device)
+model = Linear_model(args.neurons).to(device)
 
 # print(model.state_dict())
 
@@ -129,7 +135,10 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
             
 epochs = 5
 
-for t in range(epochs):
+start_time = time.time()
+
+while time.time() - start_time < 300:
+# for t in range(epochs):
     
     # print(f"Epoch {t+1}\n-------------------------------")
     
@@ -137,5 +146,7 @@ for t in range(epochs):
     
     test(test_dataloader, model, loss_0)
 
+print(f"{time.time() - start_time}s")
+    
 # print(model.state_dict())
 

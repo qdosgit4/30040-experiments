@@ -20,9 +20,6 @@ class Linear_model(nn.Module):
             nn.Linear(n, n),
             nn.ReLU(),
             nn.Linear(n, 1)
-            # nn.Linear(1, 3),
-            # nn.ReLU(),
-            # nn.Linear(3, 1),
         )
 
         nn.init.uniform_(self.linear_relu_stack[0].weight, a=-0.25, b=0.25)
