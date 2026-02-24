@@ -13,82 +13,128 @@ from gaussian_loss import Gaussian_loss
 
 ##  Initialisation.
 
-
-torch.set_default_tensor_type(torch.bfloat16)
+torch.set_default_dtype(torch.bfloat16)
 
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 
 
-####  Load up data.
+##  Load up data.
 
 batch_size_pi = 10
 
-train_data = Pi_dtaset("pi_dataset_10000.txt")
+train_data = Pi_dataset("pi_dataset_10000.txt")
 
-train_dataloader = DataLoader(train_data, batch_size=batch_size_pi,
+train_dataloader = DataLoader(train_data, batch_size = batch_size_pi,
                               shuffle=True)
 
-test_data = Pi_dtaset("pi_dataset_2000.txt")
+test_data = Pi_dataset("pi_dataset_2000.txt")
 
-test_dataloader = DataLoader(test_data, batch_size=batch_size_pi, shuffle=True)
+test_dataloader = DataLoader(test_data, batch_size = batch_size_pi,
+                             shuffle=True)
 
 
-v_w1 = nn.Parameter([1])
-    
-mu_w1 = nn.Parameter([0])
+##  Define model.
 
-normal_dist = distributions.Normal(0, 1)
-    
-w = mu_w1 + torch.sqrt(v_w1) * normal_dist.sample((1, 1))
+model = Linear_model().to(device)
 
-c = nn.Parameter([0.5])
+print(model.state_dict())
 
-v_loss = nn.Parameter([1])
 
-####  Start off mu at pi to speed up convergence.
+##  Define loss.
 
-mu_loss = nn.Parameter(3.14159)
+loss_0 = nn.CrossEntropyLoss()
 
+
+
+##  Define parameter optimisation mechanism.
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
 
-##  Training.
+def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
+          nn.Module, optimizer: torch.optim.Optimizer):
 
-for batch_data, batch_labels in train_dataloader:
+    ##  Setup parameters for loss function.
 
-    # print(batch_data)
-    print(batch_labels)
+    size = len(train_dataloader.dataset)
+    
+    model.train()
+    
+    for batch, (X, y) in enumerate(train_dataloader):
+        
+        X, y = X.to(device), y.to(device)
+
+        ##  Compute prediction error.
+        
+        y_hat = model(X)
+
+        # print(y, y_hat)
+
+        ##  Extract data by class, using mask.
+
+        ##  Loss 0 regards distance from mu.
+        ##  Loss 1 regards finding variance.
+
+        loss_res = loss_0(y_hat, y)
+        
+        ##  Backpropagation.
+        
+        loss_res.backward()
+        
+        optimizer.step()
+        
+        optimizer.zero_grad()
+
+        if batch % 100 == 0:
+            
+            current = (batch + 1) * len(X)
+            
+            # print(loss_res)
+            
+            # print(f"[{current:>5d}/{size:>5d}]")
+
+            # print(f"loss_1: {loss_1:>7f}  [{current:>5d}/{size:>5d}]")
 
 
-####  Extract data using mask.
+def test(dataloader: DataLoader, model: nn.Module, loss_fn:
+         nn.Module):
 
-batch_data_0 = batch_data[batch_labels == 0]
+    ##  Setup parameters for loss function.
 
-batch_data_1 = batch_data[batch_labels == 1]
+    size = len(train_dataloader.dataset)
+    
+    model.eval()
 
+    test_loss, correct = 0, 0
+    
+    with torch.no_grad():
+        
+        for X, y in dataloader:
+            
+            X, y = X.to(device), y.to(device)
+            
+            pred = model(X)
+            
+            test_loss += loss_fn(pred, y).item()
+            
+            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            
+    test_loss /= len(dataloader)
+    
+    correct /= len(dataloader.dataset)
+    
+    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")    
+            
+            
+epochs = 2
 
-model = Linear_model().to(device)
+for t in range(epochs):
+    
+    print(f"Epoch {t+1}\n-------------------------------")
+    
+    train(train_dataloader, model, loss_0, optimizer)
+    
+    test(test_dataloader, model, loss_0)
 
-print(model[0].weight.data)
+print(model.state_dict())
 
-model[0].weight.data = w
-
-model[0].bias.data = c
-
-
-loss_0 = nn.L1Loss()
-
-loss_1 = nn.GaussianLoss()
-
-
-mu_l_0 = mu_loss.repeat(batch_data_0.shape[0])
-
-mu_l_1 = mu_loss.repeat(batch_data_1.shape[0])
-
-v_l_1 = v_loss.repeat(batch_data_1.shape[0])
-
-
-output = loss_0(mu_l_0, _data_0) + loss_1(mu_l_1, _data_1, v_l_1)
-
-output.backward()
