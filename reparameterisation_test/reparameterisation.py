@@ -15,6 +15,8 @@ from gaussian_loss import Gaussian_loss
 
 torch.set_default_dtype(torch.bfloat16)
 
+torch.manual_seed(239852)
+
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 
 
@@ -35,9 +37,9 @@ test_dataloader = DataLoader(test_data, batch_size = batch_size_pi,
 
 ##  Define model.
 
-model = Linear_model().to(device)
+model = Linear_model(2048).to(device)
 
-print(model.state_dict())
+# print(model.state_dict())
 
 
 ##  Define loss.
@@ -82,11 +84,11 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
 
         if batch % 10000 == 0:
 
-            print(torch.stack([X, y, y_hat], dim=0).T)
+            # print(torch.stack([X, y, y_hat], dim=0).T)
 
             # print(torch.round(y_hat), y)
 
-            print(loss_res.item())
+            # print(loss_res.item())
             
             current = (batch + 1) * len(X)
             
@@ -122,18 +124,18 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
     
     correct /= len(dataloader.dataset)
     
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")    
+    print(f"{test_loss:>8f}")
             
             
 epochs = 5
 
 for t in range(epochs):
     
-    print(f"Epoch {t+1}\n-------------------------------")
+    # print(f"Epoch {t+1}\n-------------------------------")
     
     train(train_dataloader, model, loss_0, optimizer)
     
     test(test_dataloader, model, loss_0)
 
-print(model.state_dict())
+# print(model.state_dict())
 
