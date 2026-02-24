@@ -19,7 +19,7 @@ end
 # Customize plot
 xlabel!("Training epoch quantity")
 ylabel!("Average loss function during test run")
-title!("Line graph")
+# title!("")
 
 # save plot
 savefig("line_graph_loss_vs_epochs_different_archs.pdf")
