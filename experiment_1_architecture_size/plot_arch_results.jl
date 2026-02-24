@@ -18,7 +18,7 @@ end
 
 # Customize plot
 xlabel!("Training epoch quantity")
-ylabel!("Average loss function during test run")
+ylabel!("Average loss function output during test run")
 # title!("")
 
 # save plot
