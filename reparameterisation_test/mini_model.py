@@ -24,5 +24,7 @@ class Linear_model(nn.Module):
     def forward(self, x):
         
         logits = self.linear_relu_stack(x)
+
+        out = torch.sigmoid(logits)
         
-        return logits
+        return out

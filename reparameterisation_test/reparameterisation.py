@@ -42,7 +42,7 @@ print(model.state_dict())
 
 ##  Define loss.
 
-loss_0 = nn.CrossEntropyLoss()
+loss_0 = nn.BCELoss()
 
 
 
@@ -68,28 +68,27 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
         
         y_hat = model(X)
 
-        # print(y, y_hat)
-
-        ##  Extract data by class, using mask.
-
-        ##  Loss 0 regards distance from mu.
-        ##  Loss 1 regards finding variance.
-
         loss_res = loss_0(y_hat, y)
         
         ##  Backpropagation.
         
         loss_res.backward()
+
+        ##  Iterate parameters then reset graph.
         
         optimizer.step()
         
         optimizer.zero_grad()
 
-        if batch % 100 == 0:
+        if batch % 10000 == 0:
+
+            print(y_hat, y)
+
+            # print(torch.round(y_hat), y)
+
+            print(loss_res.item())
             
             current = (batch + 1) * len(X)
-            
-            # print(loss_res)
             
             # print(f"[{current:>5d}/{size:>5d}]")
 
