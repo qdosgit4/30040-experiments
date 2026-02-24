@@ -13,7 +13,7 @@ data = Dict(
 # Plot
 plot()
 for (key, value) in data
-    plot!(1:length(value), value, label=key, legend=:bottomright)
+    plot!(1:length(value), value, label=key, legend=:bottomright, marker=:circle)
 end
 
 # Customize plot
