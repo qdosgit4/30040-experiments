@@ -13,14 +13,13 @@ data = Dict(
 # Plot
 plot()
 for (key, value) in data
-    plot!(1:length(value), value, label=key)
+    plot!(1:length(value), value, label=key, legend=:bottomright)
 end
 
 # Customize plot
-xlabel!("Index")
-ylabel!("Value")
-title!("Line Graph")
-# legend!(loc=:bottomright)
+xlabel!("Training epoch quantity")
+ylabel!("Average loss function during test run")
+title!("Line graph")
 
 # save plot
-savefig("line_graph.png")
+savefig("line_graph.pdf")
