@@ -1,23 +1,24 @@
 #!/usr/bin/env/python3
 
-##  Extracted from bayesian-torch library.
+##  Layer extracted from bayesian-torch library.
 
 import torch
 from torch import nn
-
+import torch.nn.functional as F
+from torch.nn import Module, Parameter
 
 class Linear_gaussian_reparam(nn.Module):
     def __init__(self,
                  in_features,
                  out_features,
-                 prior_mean=0,
-                 prior_variance=1,
-                 posterior_mu_init=0,
-                 posterior_rho_init=-3.0,
+                 prior_mean=0.25,
+                 prior_variance=0,
+                 posterior_mu_init=0.25,
+                 posterior_rho_init=0,
                  bias=True):
         
         """
-        Implements Linear layer with reparameterization trick.
+        Implements Linear layer with reparameterisation.
 
         Parameters:
             in_features: int -> size of each input sample,
@@ -28,7 +29,8 @@ class Linear_gaussian_reparam(nn.Module):
             posterior_rho_init: float -> init trainable rho parameter representing the sigma of the approximate posterior through softplus function,
             bias: bool -> if set to False, the layer will not learn an additive bias. Default: True,
         """
-        super(LinearReparameterization, self).__init__()
+        
+        super().__init__()
 
         ##  Standard linear layer features.
 
@@ -147,9 +149,11 @@ class Linear_gaussian_reparam(nn.Module):
 
         ##  Fill tensor with Gaussian distribution samples.
         
-        self.mu_weight.data.normal_(mean=self.posterior_mu_init[0], std=0.1)
+        self.mu_weight.data.normal_(mean=self.posterior_mu_init, std=0.1)
         
-        self.rho_weight.data.normal_(mean=self.posterior_rho_init[0], std=0.1)
+        self.rho_weight.data.normal_(mean=self.posterior_rho_init, std=0.1)
+
+        ##  Repeat for bias values.
         
         if self.mu_bias is not None:
             
@@ -157,9 +161,9 @@ class Linear_gaussian_reparam(nn.Module):
             
             self.prior_bias_sigma.fill_(self.prior_variance)
             
-            self.mu_bias.data.normal_(mean=self.posterior_mu_init[0], std=0.1)
+            self.mu_bias.data.normal_(mean=self.posterior_mu_init, std=0.1)
             
-            self.rho_bias.data.normal_(mean=self.posterior_rho_init[0],
+            self.rho_bias.data.normal_(mean=self.posterior_rho_init,
                                        std=0.1)
 
 
@@ -191,6 +195,27 @@ class Linear_gaussian_reparam(nn.Module):
         return kl
 
     
+    def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
+        
+        """
+        Calculates kl divergence between two gaussians (Q || P)
+
+        Parameters:
+             * mu_q: torch.Tensor -> mu parameter of distribution Q
+             * sigma_q: torch.Tensor -> sigma parameter of distribution Q
+             * mu_p: float -> mu parameter of distribution P
+             * sigma_p: float -> sigma parameter of distribution P
+
+        returns torch.Tensor of shape 0
+        """
+        
+        kl = torch.log(sigma_p) - torch.log(
+            sigma_q) + (sigma_q**2 + (mu_q - mu_p)**2) / (2 *
+                                                          (sigma_p**2)) - 0.5
+        
+        return kl.mean()
+
+
     def forward(self, input, return_kl=True):
 
         ##  Generate sigma for weight generation via trained parameter.
@@ -214,6 +239,7 @@ class Linear_gaussian_reparam(nn.Module):
             
             kl_weight = self.kl_div(self.mu_weight, sigma_weight,
                                     self.prior_weight_mu, self.prior_weight_sigma)
+            
         bias = None
 
         if self.mu_bias is not None:
@@ -246,12 +272,13 @@ class Linear_gaussian_reparam(nn.Module):
         #     tmp_result =self.qint_quant[3](tmp_result) # multiply activation
         #     weight = self.qint_quant[4](weight) # add activatation
 
-        if return_kl:
-            if self.mu_bias is not None:
-                kl = kl_weight + kl_bias
-            else:
-                kl = kl_weight
+        if self.mu_bias is not None:
+            kl = kl_weight + kl_bias
+        else:
+            kl = kl_weight
 
-            return out, kl
+        # print(kl)
+
+            # return out, kl
 
         return out

@@ -10,7 +10,7 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
-from mini_model import Linear_model
+from mini_model_reparam import Linear_model
 
 
 parser = argparse.ArgumentParser()
@@ -28,7 +28,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 
 ##  Load up data.
 
-batch_size_pi = 2
+batch_size_pi = 10
 
 train_data = Pi_dataset("pi_dataset_10000.txt")
 
