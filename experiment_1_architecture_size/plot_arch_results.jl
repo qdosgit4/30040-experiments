@@ -22,4 +22,4 @@ ylabel!("Average loss function during test run")
 title!("Line graph")
 
 # save plot
-savefig("line_graph.pdf")
+savefig("line_graph_loss_vs_epochs_different_archs.pdf")
