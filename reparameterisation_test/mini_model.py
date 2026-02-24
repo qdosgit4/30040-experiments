@@ -15,9 +15,14 @@ class Linear_model(nn.Module):
         mu_loss = nn.Parameter(torch.Tensor([3.14159]))
 
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(1, 3),
+            nn.Linear(1, 512),
             nn.ReLU(),
-            nn.Linear(3, 1),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, 1)
+            # nn.Linear(1, 3),
+            # nn.ReLU(),
+            # nn.Linear(3, 1),
         )
         
 

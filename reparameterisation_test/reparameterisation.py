@@ -20,7 +20,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 
 ##  Load up data.
 
-batch_size_pi = 10
+batch_size_pi = 2
 
 train_data = Pi_dataset("pi_dataset_10000.txt")
 
@@ -82,7 +82,7 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
 
         if batch % 10000 == 0:
 
-            print(y_hat, y)
+            print(torch.stack([X, y, y_hat], dim=0).T)
 
             # print(torch.round(y_hat), y)
 
@@ -125,7 +125,7 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")    
             
             
-epochs = 2
+epochs = 5
 
 for t in range(epochs):
     
