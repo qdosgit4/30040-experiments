@@ -1,12 +1,14 @@
 # mypy: allow-untyped-defs
 r"""Implementation for Stochastic Gradient Descent optimizer."""
 
+##  Official PyTorch SGD optimiser.
+
 from typing import cast
 
 import torch
 from torch import Tensor
 
-from .optimizer import (
+from torch.optim.optimizer import (
     _default_to_fused_or_foreach,
     _device_dtype_check_for_fused,
     _differentiable_doc,
@@ -25,7 +27,8 @@ from .optimizer import (
 __all__ = ["SGD", "sgd"]
 
 
-class SGD(Optimizer):  # noqa: D101
+class SGD_det(Optimizer):  # noqa: D101
+    
     def __init__(
         self,
         params: ParamsT,
@@ -40,6 +43,7 @@ class SGD(Optimizer):  # noqa: D101
         differentiable: bool = False,
         fused: bool | None = None,
     ) -> None:  # noqa: D107
+
         if isinstance(lr, Tensor) and lr.numel() != 1:
             raise ValueError("Tensor lr must be 1-element")
         if lr < 0.0:
@@ -152,7 +156,7 @@ class SGD(Optimizer):  # noqa: D101
         return loss
 
 
-SGD.__doc__ = (
+SGD_det.__doc__ = (
     r"""Implements stochastic gradient descent (optionally with momentum).
 
     .. math::
@@ -303,6 +307,8 @@ def sgd(
     else:
         func = _single_tensor_sgd
 
+    print(fused, foreach)
+        
     func(
         params,
         d_p_list,

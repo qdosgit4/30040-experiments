@@ -13,7 +13,7 @@ from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
 from mini_model_reparam import Linear_model
-from import optimiser_sgd_reparam import SGD_reparam
+from optimiser_sgd_reparam import SGD_reparam
 
 ##  Initialisation.
 
@@ -62,7 +62,7 @@ def main():
 
     ##  Define parameter optimisation mechanism.
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+    optimizer = SGD_reparam(model.parameters(), lr=1e-3)
 
     ##  Set quantity of training epochs.
 
@@ -126,12 +126,16 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
         
         optimizer.zero_grad()
 
-        if batch % 100 == 0:
+        optimizer.debug_off()
+
+        if batch % 1000 == 0:
                   
             # print(torch.stack([X, y, y_hat], dim=0).T)
 
             ##  It is not necessary to know the exact parameter
             ##  values, just that they are changing.
+
+            optimizer.debug_on()
 
             print(model.state_dict().keys())
 

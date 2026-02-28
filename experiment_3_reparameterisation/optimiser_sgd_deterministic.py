@@ -43,6 +43,7 @@ class SGD_det(Optimizer):  # noqa: D101
         differentiable: bool = False,
         fused: bool | None = None,
     ) -> None:  # noqa: D107
+
         if isinstance(lr, Tensor) and lr.numel() != 1:
             raise ValueError("Tensor lr must be 1-element")
         if lr < 0.0:
@@ -306,6 +307,8 @@ def sgd(
     else:
         func = _single_tensor_sgd
 
+    print(fused, foreach)
+        
     func(
         params,
         d_p_list,

@@ -28,7 +28,8 @@ __all__ = ["SGD", "sgd"]
 
 
 class SGD_reparam(Optimizer):  # noqa: D101
-    
+
+   
     def __init__(
         self,
         params: ParamsT,
@@ -43,6 +44,7 @@ class SGD_reparam(Optimizer):  # noqa: D101
         differentiable: bool = False,
         fused: bool | None = None,
     ) -> None:  # noqa: D107
+        
         if isinstance(lr, Tensor) and lr.numel() != 1:
             raise ValueError("Tensor lr must be 1-element")
         if lr < 0.0:
@@ -75,7 +77,32 @@ class SGD_reparam(Optimizer):  # noqa: D101
             if foreach:
                 raise RuntimeError("`fused` and `foreach` cannot be `True` together.")
 
+
+        ##  Setup debug mode.
+
+        self.debug = False
+
+
+    def debug_on(self):
+
+        self.debug = True
+
+
+    def debug_off(self):
+
+        self.debug = False
+
+        
+    def debug_mode(self):
+
+        return self.debug
+
+            
     def __setstate__(self, state):  # noqa: D105
+
+        ##  Allegedly used to load in an optimiser state that has been
+        ##  previously exported.
+        
         super().__setstate__(state)
         for group in self.param_groups:
             group.setdefault("nesterov", False)
@@ -84,7 +111,11 @@ class SGD_reparam(Optimizer):  # noqa: D101
             group.setdefault("differentiable", False)
             group.setdefault("fused", False)
 
+            
     def _init_group(self, group, params, grads, momentum_buffer_list):
+
+        ##  Checks if tensor "uses sparse COO storage layout".
+        
         has_sparse_grad = False
 
         for p in group["params"]:
@@ -105,6 +136,7 @@ class SGD_reparam(Optimizer):  # noqa: D101
 
         return has_sparse_grad
 
+    
     @_use_grad_for_differentiable
     def step(self, closure=None):
         """Perform a single optimization step.
@@ -118,7 +150,10 @@ class SGD_reparam(Optimizer):  # noqa: D101
             with torch.enable_grad():
                 loss = closure()
 
+        ##  self.debug_mode() and print(self.param_groups)
+
         for group in self.param_groups:
+            
             params: list[Tensor] = []
             grads: list[Tensor] = []
             momentum_buffer_list: list[Tensor | None] = []
@@ -126,6 +161,8 @@ class SGD_reparam(Optimizer):  # noqa: D101
             has_sparse_grad = self._init_group(
                 group, params, grads, momentum_buffer_list
             )
+
+            self.debug_mode() and print(self.param_groups)
 
             sgd(
                 params,
@@ -144,6 +181,8 @@ class SGD_reparam(Optimizer):  # noqa: D101
                 found_inf=getattr(self, "found_inf", None),
             )
 
+            
+
             if group["momentum"] != 0:
                 # update momentum_buffers in state
                 for p, momentum_buffer in zip(
@@ -155,7 +194,7 @@ class SGD_reparam(Optimizer):  # noqa: D101
         return loss
 
 
-SGD.__doc__ = (
+SGD_reparam.__doc__ = (
     r"""Implements stochastic gradient descent (optionally with momentum).
 
     .. math::
@@ -298,6 +337,9 @@ def sgd(
         raise RuntimeError("torch.jit.script not supported with foreach optimizers")
     if fused and torch.jit.is_scripting():
         raise RuntimeError("torch.jit.script not supported with fused optimizers")
+
+    ##  Decide what kind of SGD implementation to run, based on data
+    ##  structures.
 
     if foreach and not torch.jit.is_scripting():
         func = _multi_tensor_sgd
