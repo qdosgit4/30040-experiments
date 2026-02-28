@@ -13,7 +13,7 @@ from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
 from mini_model_reparam import Linear_model
-
+from import optimiser_sgd_reparam import SGD_reparam
 
 ##  Initialisation.
 
@@ -133,7 +133,7 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
             ##  It is not necessary to know the exact parameter
             ##  values, just that they are changing.
 
-            # print(model.state_dict().keys())
+            print(model.state_dict().keys())
 
             print(model.state_dict()['linear_relu_stack.0.mu_weight'].sum(),
                   model.state_dict()['linear_relu_stack.0.rho_weight'].sum(),
@@ -149,6 +149,9 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
                   model.state_dict()['linear_relu_stack.4.rho_bias'].sum(),
                   )
 
+            print(model.state_dict()['linear_relu_stack.0.mu_weight'][0])
+            print(model.state_dict()['linear_relu_stack.0.mu_weight'][0].grad)
+            
             # print(torch.round(y_hat), y)
 
             # print(loss_res.item())
