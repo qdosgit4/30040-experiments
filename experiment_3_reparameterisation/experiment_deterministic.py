@@ -108,10 +108,10 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
 
         if batch % 10000 == 0:
 
-          print(model.state_dict().keys())
+          # print(model.state_dict().keys())
 
-          print(model.state_dict()['linear_relu_stack.0.weight'][0])
-          print(model.state_dict()['linear_relu_stack.0.weight'][0].grad)
+          # print(model.state_dict()['linear_relu_stack.0.weight'][0])
+          # print(model.state_dict()['linear_relu_stack.0.weight'][0].grad)
 
           current = (batch + 1) * len(X)
             

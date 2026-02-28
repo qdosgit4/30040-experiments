@@ -179,6 +179,7 @@ class SGD_reparam(Optimizer):  # noqa: D101
                 fused=group["fused"],
                 grad_scale=getattr(self, "grad_scale", None),
                 found_inf=getattr(self, "found_inf", None),
+                debug_mode=self.debug_mode()
             )
 
             
@@ -309,6 +310,7 @@ def sgd(
     dampening: float,
     nesterov: bool,
     maximize: bool,
+    debug_mode: bool,
 ) -> None:
     r"""Functional API that performs SGD algorithm computation.
 
@@ -361,6 +363,8 @@ def sgd(
         maximize=maximize,
         grad_scale=grad_scale,
         found_inf=found_inf,
+        debug_mode=debug_mode
+
     )
 
 
@@ -378,7 +382,13 @@ def _single_tensor_sgd(
     nesterov: bool,
     maximize: bool,
     has_sparse_grad: bool,
+    debug_mode: bool
 ) -> None:
+
+    debug_mode and print("Hit _single_tensor_sgd()")
+
+    debug_mode and print('grads:', grads)
+    
     if grad_scale is not None or found_inf is not None:
         raise AssertionError("Expected grad_scale and found_inf to be None")
 
@@ -439,7 +449,11 @@ def _multi_tensor_sgd(
     nesterov: bool,
     maximize: bool,
     has_sparse_grad: bool,
+    debug_mode: bool
 ) -> None:
+
+    debug_mode and print("Hit _multi_tensor_sgd()")
+    
     if grad_scale is not None or found_inf is not None:
         raise AssertionError("Expected grad_scale and found_inf to be None")
 
@@ -536,7 +550,11 @@ def _fused_sgd(
     nesterov: bool,
     maximize: bool,
     has_sparse_grad: bool,
+    debug_mode: bool
 ) -> None:
+
+    debug_mode and print("Hit _fused_sgd()")
+
     if not params:
         return
     if has_sparse_grad:

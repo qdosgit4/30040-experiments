@@ -307,7 +307,7 @@ def sgd(
     else:
         func = _single_tensor_sgd
 
-    print(fused, foreach)
+    # print(fused, foreach)
         
     func(
         params,
@@ -345,6 +345,8 @@ def _single_tensor_sgd(
 
     if not torch.jit.is_scripting():
         lr = _to_scalar(lr)
+
+    # print(grads)
 
     for i, param in enumerate(params):
         grad = grads[i] if not maximize else -grads[i]
