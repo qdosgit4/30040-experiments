@@ -108,8 +108,6 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
 
     ##  Setup parameters for loss function.
 
-    size = len(train_dataloader.dataset)
-    
     model.eval()
 
     test_loss, correct = 0, 0
