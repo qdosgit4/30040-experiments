@@ -155,7 +155,7 @@ class SGD_det(Optimizer):  # noqa: D101
         return loss
 
 
-SGD.__doc__ = (
+SGD_det.__doc__ = (
     r"""Implements stochastic gradient descent (optionally with momentum).
 
     .. math::

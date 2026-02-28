@@ -10,7 +10,7 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
-from mini_model import Linear_model
+from mini_model_deterministic import Linear_model
 from optimiser_sgd_deterministic import SGD_det
 
 parser = argparse.ArgumentParser()
@@ -153,3 +153,5 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
     
     print(f"test_loss: {test_loss:>8f}")
             
+
+main()
