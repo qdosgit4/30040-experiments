@@ -3,6 +3,8 @@
 import torch
 from torch import nn
 
+from linear_layer_deterministic import Linear_deterministic
+
 
 class Linear_model(nn.Module):
     
@@ -11,11 +13,11 @@ class Linear_model(nn.Module):
         super().__init__()
         
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(1, n),
+            Linear_deterministic(1, n),
             nn.ReLU(),
-            nn.Linear(n, n),
+            Linear_deterministic(n, n),
             nn.ReLU(),
-            nn.Linear(n, 1)
+            Linear_deterministic(n, 1)
         )
 
         nn.init.uniform_(self.linear_relu_stack[0].weight, a=-0.25, b=0.25)

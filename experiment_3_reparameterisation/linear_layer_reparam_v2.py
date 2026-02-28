@@ -23,9 +23,7 @@ __all__ = [
 
 
 class Linear_gaussian_reparam_v2(Module):
-
-    
-    
+       
     __constants__ = ["in_features", "out_features"]
     in_features: int
     out_features: int
