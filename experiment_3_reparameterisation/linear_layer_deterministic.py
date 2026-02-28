@@ -52,28 +52,27 @@ class Linear_deterministic(Module):
         )
         
         self.mu_weight = Parameter(torch.empty(out_features,
-                                               in_features), **factory_kwargs)
+                                               in_features, **factory_kwargs))
         
         self.rho_weight = Parameter(torch.empty(out_features,
-                                                in_features), **factory_kwargs)
+                                                in_features, **factory_kwargs))
 
-        self.register_buffer('eps_weight',
-                             torch.Tensor(out_features, in_features),
-                             persistent=False, **factory_kwargs)
+        self.register_buffer('eps_weight', torch.empty(out_features,
+                                                        in_features,
+                                                        **factory_kwargs),
+                                                        persistent=False)
 
         if bias:
                         
             self.bias = Parameter(torch.empty(out_features, **factory_kwargs))
             
-            self.mu_bias = Parameter(torch.empty(out_features,
-                                                 in_features), **factory_kwargs)
+            self.mu_bias = Parameter(torch.empty(out_features, **factory_kwargs))
         
-            self.rho_bias = Parameter(torch.empty(out_features,
-                                                  in_features), **factory_kwargs)
+            self.rho_bias = Parameter(torch.empty(out_features, **factory_kwargs))
             
             self.register_buffer('eps_weight',
-                             torch.Tensor(out_features, in_features),
-                                 persistent=False, **factory_kwargs)
+                             torch.empty(out_features, in_features, **factory_kwargs),
+                                 persistent=False)
 
         else:
             
@@ -83,10 +82,9 @@ class Linear_deterministic(Module):
             
             self.register_parameter("rho_bias", None, **factory_kwargs)
             
-            self.register_buffer('eps_weight', None, persistent=False,
-                                 **factory_kwargs)
+            self.register_buffer('eps_weight', None, persistent=False)
 
-        self.reset_parameters()
+        self.reset_parameters(mu_init, rho_init)
 
         
     def reset_parameters(self, mu_init: float, rho_init: float) -> None:
@@ -96,6 +94,10 @@ class Linear_deterministic(Module):
         # Setting a=sqrt(5) in kaiming_uniform is the same as initializing with
         # uniform(-1/sqrt(in_features), 1/sqrt(in_features)). For details, see
         # https://github.com/pytorch/pytorch/issues/57109
+        
+        init.kaiming_uniform_(self.mu_weight, a=math.sqrt(5))
+        
+        init.kaiming_uniform_(self.rho_weight, a=math.sqrt(5))
         
         init.kaiming_uniform_(self.weight, a=math.sqrt(5))
         
@@ -113,6 +115,8 @@ class Linear_deterministic(Module):
         """
         Runs the forward pass.
         """
+
+        self.weight = self.mu_weight
         
         return F.linear(input, self.weight, self.bias)
 
