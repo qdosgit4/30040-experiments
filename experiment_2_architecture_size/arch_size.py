@@ -14,7 +14,10 @@ from mini_model import Linear_model
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--neurons', type=int, help='Quantity of n neurons in 1-n-n-1 network.')
+parser.add_argument('--neurons',
+                    required = True,
+                    type = int,
+                    help = 'Quantity of n neurons in 1-n-n-1 network.')
 args = parser.parse_args()
 
 ##  Initialisation.
