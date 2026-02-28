@@ -10,8 +10,8 @@ from torch import Tensor
 from torch.nn import functional as F, init
 from torch.nn.parameter import Parameter, UninitializedParameter
 
-from .lazy import LazyModuleMixin
-from .module import Module
+from torch.nn.modules.lazy import LazyModuleMixin
+from torch.nn.modules.module import Module
 
 
 __all__ = [
