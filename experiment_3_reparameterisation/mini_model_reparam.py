@@ -20,6 +20,8 @@ class Linear_model(nn.Module):
             Linear_gaussian_reparam(n, 1)
         )
 
+        ##  Non-probabilistic equivalent:
+
         # self.linear_relu_stack = nn.Sequential(
         #     nn.Linear(1, n),
         #     nn.ReLU(),
@@ -37,7 +39,7 @@ class Linear_model(nn.Module):
         
         logits = self.linear_relu_stack(x)
 
-        print(logits)
+        # print(logits)
 
         out = torch.sigmoid(logits)
         

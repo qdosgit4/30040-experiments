@@ -10,6 +10,7 @@ from torch.nn import Module, Parameter
 torch.set_default_dtype(torch.bfloat16)
 
 class Linear_gaussian_reparam(nn.Module):
+    
     def __init__(self,
                  in_features,
                  out_features,
@@ -50,13 +51,13 @@ class Linear_gaussian_reparam(nn.Module):
         
         self.prior_mean = prior_mean
         
-        self.prior_variance = prior_variance        
+        self.prior_variance = prior_variance
 
         ##  The initial distribution parameters of the distributions
         ##  to be trained.
         
-        ##  This would usually be equivalent to the prior, but this allows a
-        ##  pretrained drop-in.
+        ##  This would typically be equivalent to the prior, but a
+        ##  separate variables allows a pretrained drop-in.
         
         ##  sigma = log (1 + exp(rho))
         
@@ -68,16 +69,16 @@ class Linear_gaussian_reparam(nn.Module):
 
         ##  Setup training distribution parameters.
 
-        self.mu_weight = Parameter(torch.Tensor(out_features, in_features))
+        self.mu_weight = Parameter(torch.Tensor(out_features, in_features), requires_grad=True)
         
-        self.rho_weight = Parameter(torch.Tensor(out_features, in_features))
+        self.rho_weight = Parameter(torch.Tensor(out_features, in_features), requires_grad=True)
 
         ##  Register buffer: "data that is not a model parameter but
         ##  that is part of the module's state". E.g. during batch
         ##  normalisation, or calculating KL loss.
 
-        ##  eps_weight is used to generate weights during forward
-        ##  propagation.
+        ##  eps_weight, epsilon weight, is used to generate weights
+        ##  during forward propagation.
         
         self.register_buffer('eps_weight',
                              torch.Tensor(out_features, in_features),
@@ -92,11 +93,14 @@ class Linear_gaussian_reparam(nn.Module):
                              torch.Tensor(out_features, in_features),
                              persistent=False)
 
+        ##  Optionally also generate bias parameter probability
+        ##  distributions.
+
         if bias:
             
-            self.mu_bias = Parameter(torch.Tensor(out_features))
+            self.mu_bias = Parameter(torch.Tensor(out_features), requires_grad=True)
             
-            self.rho_bias = Parameter(torch.Tensor(out_features))
+            self.rho_bias = Parameter(torch.Tensor(out_features), requires_grad=True)
             
             self.register_buffer(
                 'eps_bias',
@@ -235,6 +239,10 @@ class Linear_gaussian_reparam(nn.Module):
         ##  Generate sigma for weight generation via trained parameter.
         
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
+ 
+        # print('------------------------------------------------------------  RHO WEIGHT')
+        
+        # print(self.rho_weight)
 
         ##  Generate epsilon weight via Gaussian distribution, N(0, 1).
         
@@ -246,9 +254,9 @@ class Linear_gaussian_reparam(nn.Module):
         
         weight = self.mu_weight #+ tmp_result
 
-        print('------------------------------------------------------------  WEIGHTS GEN')
+        # print('------------------------------------------------------------  WEIGHTS GEN')
         
-        print(weight)
+        # print(weight)
 
         if return_kl:
 

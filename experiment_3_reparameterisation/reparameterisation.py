@@ -5,7 +5,6 @@ import time
 
 import numpy as np
 
-
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -16,19 +15,19 @@ from pi_dataset import Pi_dataset
 from mini_model_reparam import Linear_model
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--neurons', type=int, help='Quantity of n neurons in 1-n-n-1 network.')
-args = parser.parse_args()
-
-
 ##  Initialisation.
 
-torch.set_default_dtype(torch.bfloat16)
+parser = argparse.ArgumentParser()
+parser.add_argument('--neurons',
+                    required = True,
+                    type = int,
+                    help = 'Quantity of n neurons in 1-n-n-1 network. Try 512, or 1024.')
+args = parser.parse_args()
 
+torch.set_default_dtype(torch.bfloat16)
 torch.manual_seed(239852)
 
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-
 
 
 def main():
@@ -76,9 +75,11 @@ def main():
     
     for t in range(epochs):
 
-        # print(f"Epoch {t+1}\n-------------------------------")
+        print(f"Training...")
 
         train(train_dataloader, model, loss, optimizer)
+
+        print(f"Testing...")
 
         test(test_dataloader, model, loss)
 
@@ -91,17 +92,16 @@ def main():
     with open("model_params_mu_weight_post.txt", "w") as f:
 
         f.write(str(model.state_dict()['linear_relu_stack.0.mu_weight']))
-
     
 
-def train(train_dataloader: DataLoader, model: nn.Module, loss:
-          nn.Module, optimizer: torch.optim.Optimizer):
+def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
+          optimizer: torch.optim.Optimizer):
 
     ##  Put model into training mode; ensures gradient tracking.
 
     model.train()
     
-    for batch, (X, y) in enumerate(train_dataloader):
+    for batch, (X, y) in enumerate(dl):
         
         X, y = X.to(device), y.to(device)
 
@@ -126,9 +126,28 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss:
         
         optimizer.zero_grad()
 
-        if batch % 10000 == 0:
+        if batch % 100 == 0:
                   
-            print(torch.stack([X, y, y_hat], dim=0).T)
+            # print(torch.stack([X, y, y_hat], dim=0).T)
+
+            ##  It is not necessary to know the exact parameter
+            ##  values, just that they are changing.
+
+            # print(model.state_dict().keys())
+
+            print(model.state_dict()['linear_relu_stack.0.mu_weight'].sum(),
+                  model.state_dict()['linear_relu_stack.0.rho_weight'].sum(),
+                  model.state_dict()['linear_relu_stack.0.mu_bias'].sum(),
+                  model.state_dict()['linear_relu_stack.0.rho_bias'].sum(),
+                  model.state_dict()['linear_relu_stack.2.mu_weight'].sum(),
+                  model.state_dict()['linear_relu_stack.2.rho_weight'].sum(),
+                  model.state_dict()['linear_relu_stack.2.mu_bias'].sum(),
+                  model.state_dict()['linear_relu_stack.2.rho_bias'].sum(),
+                  model.state_dict()['linear_relu_stack.4.mu_weight'].sum(),
+                  model.state_dict()['linear_relu_stack.4.rho_weight'].sum(),
+                  model.state_dict()['linear_relu_stack.4.mu_bias'].sum(),
+                  model.state_dict()['linear_relu_stack.4.rho_bias'].sum(),
+                  )
 
             # print(torch.round(y_hat), y)
 
@@ -141,20 +160,17 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss:
             # print(f"loss_1: {loss_1:>7f}  [{current:>5d}/{size:>5d}]")
 
 
-def test(dataloader: DataLoader, model: nn.Module, loss_fn:
-         nn.Module):
+def test(dl: DataLoader, model: nn.Module, loss_fn: nn.Module):
 
     ##  Setup parameters for loss function.
 
-    size = len(train_dataloader.dataset)
-    
     model.eval()
 
     test_loss, correct = 0, 0
     
     with torch.no_grad():
         
-        for X, y in dataloader:
+        for X, y in dl:
             
             X, y = X.to(device), y.to(device)
             
@@ -164,8 +180,11 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
             
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
             
-    test_loss /= len(dataloader)
+    test_loss /= len(dl)
     
-    correct /= len(dataloader.dataset)
+    correct /= len(dl.dataset)
     
     print(f"{test_loss:>8f}")
+
+
+main()
