@@ -3,8 +3,6 @@
 import argparse
 import time
 
-import numpy as np
-
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -13,17 +11,42 @@ from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
 from mini_model_reparam import Linear_model
-from optimiser_sgd_reparam import SGD_reparam
+# from optimiser_sgd_reparam import SGD_reparam
 
+
+##  TODO HANDLE ARGS FOR CBDL
 
 ##  Initialisation.
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--neurons',
+parser.add_argument('--neurons-n',
                     required = True,
                     type = int,
                     help = 'Quantity of n neurons in 1-n-n-1 network. Try 512, or 1024.')
+parser.add_argument('--batch-n',
+                    required = True,
+                    type = int,
+                    help = 'Size of batch from dataset during training/testing. 256 recommended.')
+parser.add_argument('--laplace-b',
+                    required = False,
+                    default = 0.025,
+                    type = float,
+                    help = 'Laplace constant to use as likelihood model.')
+parser.add_argument('--mu-init',
+                    required = False,
+                    default = 0.25,
+                    type = float,
+                    help = 'Initial value of mu to set mu of probabilitiy distributions of weights to.')
+parser.add_argument('--rho-init',
+                    required = False,
+                    default = -5,
+                    type = float,
+                    help = 'Initial value of rho to set mu of probabilitiy distributions of weights to.')
+
 args = parser.parse_args()
+
+for key, value in vars(args).items():
+            print(f"{key}: {value}")
 
 torch.set_default_dtype(torch.bfloat16)
 torch.manual_seed(239852)
@@ -35,7 +58,7 @@ def main():
 
     ##  Load up data.
 
-    batch_size_pi = 2
+    batch_size_pi = args.batch_n
 
     train_data = Pi_dataset("pi_dataset_10000.txt")
 
@@ -49,13 +72,30 @@ def main():
 
     ##  Define model.
 
-    model = Linear_model(args.neurons).to(device)
+    model = Linear_model(
+        args.neurons_n,
+        3.14159,
+        args.laplace_b,
+        args.mu_init,
+        args.rho_init
+    ).to(device)
+
+    # --- DATA PARALLEL CHANGE START ---
+    
+    if torch.cuda.device_count() > 1:
+        
+        print(f"Using {torch.cuda.device_count()} GPUs!")
+        
+        model = nn.DataParallel(model, device_ids=[0, 1])
+        
+    # --- DATA PARALLEL CHANGE END ---
 
     ##  Save model params to plaintext.
+    
+    with open("model_params_weight_mu_pre.txt", "w") as f:
 
-    with open("model_params_mu_weight_pre.txt", "w") as f:
-
-        f.write(str(model.state_dict()['linear_relu_stack.0.mu_weight']))
+        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+        f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
 
     ##  Define loss.
 
@@ -63,11 +103,11 @@ def main():
 
     ##  Define parameter optimisation mechanism.
 
-    optimizer = SGD_reparam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
     ##  Set quantity of training epochs.
 
-    epochs = 3
+    epochs = 20
 
     start_time = time.time()
     # while time.time() - start_time < 300:
@@ -89,10 +129,11 @@ def main():
     # print(model.state_dict())
 
     ##  Save model params to plaintext.
+    
+    with open("model_params_weight_mu_pre.txt", "w") as f:
 
-    with open("model_params_mu_weight_post.txt", "w") as f:
-
-        f.write(str(model.state_dict()['linear_relu_stack.0.mu_weight']))
+        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+        f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
     
 
 def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
@@ -127,35 +168,37 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
         
         optimizer.zero_grad()
 
-        optimizer.debug_off()
+        # optimizer.debug_off()
 
         if batch % 1000 == 0:
+
+            pass
                   
             # print(torch.stack([X, y, y_hat], dim=0).T)
 
             ##  It is not necessary to know the exact parameter
             ##  values, just that they are changing.
 
-            optimizer.debug_off()
+            # optimizer.debug_off()
 
             # print(model.state_dict().keys())
 
-            # print(model.state_dict()['linear_relu_stack.0.mu_weight'].sum(),
+            # print(model.state_dict()['linear_relu_stack.0.weight_mu'].sum(),
             #       model.state_dict()['linear_relu_stack.0.rho_weight'].sum(),
             #       model.state_dict()['linear_relu_stack.0.mu_bias'].sum(),
             #       model.state_dict()['linear_relu_stack.0.rho_bias'].sum(),
-            #       model.state_dict()['linear_relu_stack.2.mu_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.2.weight_mu'].sum(),
             #       model.state_dict()['linear_relu_stack.2.rho_weight'].sum(),
             #       model.state_dict()['linear_relu_stack.2.mu_bias'].sum(),
             #       model.state_dict()['linear_relu_stack.2.rho_bias'].sum(),
-            #       model.state_dict()['linear_relu_stack.4.mu_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.4.weight_mu'].sum(),
             #       model.state_dict()['linear_relu_stack.4.rho_weight'].sum(),
             #       model.state_dict()['linear_relu_stack.4.mu_bias'].sum(),
             #       model.state_dict()['linear_relu_stack.4.rho_bias'].sum(),
             #       )
 
-            # print(model.state_dict()['linear_relu_stack.0.mu_weight'][0])
-            # print(model.state_dict()['linear_relu_stack.0.mu_weight'][0].grad)
+            # print(model.state_dict()['linear_relu_stack.0.weight_mu'][0])
+            # print(model.state_dict()['linear_relu_stack.0.weight_mu'][0].grad)
             
             # print(torch.round(y_hat), y)
 
