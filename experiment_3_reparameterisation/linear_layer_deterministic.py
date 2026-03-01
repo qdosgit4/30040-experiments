@@ -36,7 +36,7 @@ class Linear_deterministic(Module):
             device = None,
             dtype = None,
             mu_init: float = 0.25,
-            rho_init: float = 0.25
+            rho_init: float = 0.05
     ) -> None:
         
         factory_kwargs = {"device": device, "dtype": dtype}
@@ -95,15 +95,25 @@ class Linear_deterministic(Module):
 
         
     def reset_parameters(self, mu_init: float, rho_init: float) -> None:
+
+        # init.constant_(self.mu_weight, mu_init)
+ 
+        # init.constant_(self.rho_weight, rho_init)
+ 
+        # init.constant_(self.sigma_weight, rho_init)
+ 
+        init.uniform_(self.mu_weight, a = -0.25, b = 0.25)
         
-        init.kaiming_uniform_(self.mu_weight, a=math.sqrt(5))
-        
-        init.kaiming_uniform_(self.rho_weight, a=math.sqrt(5))
+        # init.kaiming_uniform_(self.rho_weight, a=math.sqrt(5))
         
         init.kaiming_uniform_(self.weight, a=math.sqrt(5))
         
         if self.bias is not None:
             
+            # init.constant_(self.mu_bias, mu_init)
+        
+            # init.constant_(self.rho_bias, rho_init)
+        
             fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
             
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
@@ -112,21 +122,13 @@ class Linear_deterministic(Module):
 
             
     def forward(self, input: Tensor) -> Tensor:
-        
-        # self.sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
-        # self.sigma_weight = torch.exp(self.rho_weight)
+        self.eps_weight = self.eps_weight.data.normal_(mean = 0, std = 0.3)
 
-        # input_identity = torch.ones_like(input)
-
-        # self.weight = self.mu_weight + self.rho_weight
-
-        # print(self.rho_weight)
-
-        # print(torch.exp(self.rho_weight))
+        self.eps_weight = torch.abs(self.eps_weight)
         
         return F.linear(input,
-                        torch.log1p(self.rho_weight),
+                        self.mu_weight, ## + self.sigma_weight * self.eps_weight,
                         self.bias)
 
     
