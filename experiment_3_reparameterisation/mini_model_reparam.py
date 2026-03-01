@@ -3,7 +3,7 @@
 import torch
 from torch import nn
 
-from linear_reparam_layer import Linear_gaussian_reparam
+from linear_layer_reparam_v2 import Linear_reparam_gaussian
 
 
 class Linear_model(nn.Module):
@@ -13,11 +13,11 @@ class Linear_model(nn.Module):
         super().__init__()
 
         self.linear_relu_stack = nn.Sequential(
-            Linear_gaussian_reparam(1, n),
+            Linear_reparam_gaussian(1, n),
             nn.ReLU(),
-            Linear_gaussian_reparam(n, n),
+            Linear_reparam_gaussian(n, n),
             nn.ReLU(),
-            Linear_gaussian_reparam(n, 1)
+            Linear_reparam_gaussian(n, 1)
         )
 
         ##  Non-probabilistic equivalent:

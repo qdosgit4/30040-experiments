@@ -67,7 +67,7 @@ def main():
 
     ##  Set quantity of training epochs.
 
-    epochs = 2
+    epochs = 3
 
     # start_time = time.time()
     # while time.time() - start_time < 300:
@@ -136,26 +136,26 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
             ##  It is not necessary to know the exact parameter
             ##  values, just that they are changing.
 
-            optimizer.debug_on()
+            optimizer.debug_off()
 
-            print(model.state_dict().keys())
+            # print(model.state_dict().keys())
 
-            print(model.state_dict()['linear_relu_stack.0.mu_weight'].sum(),
-                  model.state_dict()['linear_relu_stack.0.rho_weight'].sum(),
-                  model.state_dict()['linear_relu_stack.0.mu_bias'].sum(),
-                  model.state_dict()['linear_relu_stack.0.rho_bias'].sum(),
-                  model.state_dict()['linear_relu_stack.2.mu_weight'].sum(),
-                  model.state_dict()['linear_relu_stack.2.rho_weight'].sum(),
-                  model.state_dict()['linear_relu_stack.2.mu_bias'].sum(),
-                  model.state_dict()['linear_relu_stack.2.rho_bias'].sum(),
-                  model.state_dict()['linear_relu_stack.4.mu_weight'].sum(),
-                  model.state_dict()['linear_relu_stack.4.rho_weight'].sum(),
-                  model.state_dict()['linear_relu_stack.4.mu_bias'].sum(),
-                  model.state_dict()['linear_relu_stack.4.rho_bias'].sum(),
-                  )
+            # print(model.state_dict()['linear_relu_stack.0.mu_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.0.rho_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.0.mu_bias'].sum(),
+            #       model.state_dict()['linear_relu_stack.0.rho_bias'].sum(),
+            #       model.state_dict()['linear_relu_stack.2.mu_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.2.rho_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.2.mu_bias'].sum(),
+            #       model.state_dict()['linear_relu_stack.2.rho_bias'].sum(),
+            #       model.state_dict()['linear_relu_stack.4.mu_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.4.rho_weight'].sum(),
+            #       model.state_dict()['linear_relu_stack.4.mu_bias'].sum(),
+            #       model.state_dict()['linear_relu_stack.4.rho_bias'].sum(),
+            #       )
 
-            print(model.state_dict()['linear_relu_stack.0.mu_weight'][0])
-            print(model.state_dict()['linear_relu_stack.0.mu_weight'][0].grad)
+            # print(model.state_dict()['linear_relu_stack.0.mu_weight'][0])
+            # print(model.state_dict()['linear_relu_stack.0.mu_weight'][0].grad)
             
             # print(torch.round(y_hat), y)
 
