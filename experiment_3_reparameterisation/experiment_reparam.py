@@ -69,7 +69,7 @@ def main():
 
     epochs = 3
 
-    # start_time = time.time()
+    start_time = time.time()
     # while time.time() - start_time < 300:
 
     ##  Run train-test sequence.
@@ -84,7 +84,7 @@ def main():
 
         test(test_dataloader, model, loss)
 
-    # print(f"{time.time() - start_time}s")
+    print(f"{time.time() - start_time}s")
     
     # print(model.state_dict())
 
