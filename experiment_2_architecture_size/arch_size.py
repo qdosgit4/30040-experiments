@@ -93,17 +93,22 @@ def train(train_dataloader: DataLoader, model: nn.Module, loss_0:
 
         if batch % 10000 == 0:
 
-            # print(torch.stack([X, y, y_hat], dim=0).T)
+          print(model.state_dict().keys())
 
-            # print(torch.round(y_hat), y)
+          print(model.state_dict()['linear_relu_stack.0.weight'][0])
+          print(model.state_dict()['linear_relu_stack.0.weight'][0].grad)
 
-            # print(loss_res.item())
+          current = (batch + 1) * len(X)
             
-            current = (batch + 1) * len(X)
-            
-            # print(f"[{current:>5d}/{size:>5d}]")
+          # print(torch.stack([X, y, y_hat], dim=0).T)
 
-            # print(f"loss_1: {loss_1:>7f}  [{current:>5d}/{size:>5d}]")
+          # print(torch.round(y_hat), y)
+
+          # print(loss_res.item())
+
+          # print(f"[{current:>5d}/{size:>5d}]")
+
+          # print(f"loss_1: {loss_1:>7f}  [{current:>5d}/{size:>5d}]")
 
 
 def test(dataloader: DataLoader, model: nn.Module, loss_fn:
@@ -131,7 +136,7 @@ def test(dataloader: DataLoader, model: nn.Module, loss_fn:
     
     correct /= len(dataloader.dataset)
     
-    print(f"{test_loss:>8f}")
+    print(f"test_loss: {test_loss:>8f}")
             
             
 epochs = 5
