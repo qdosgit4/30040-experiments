@@ -48,28 +48,6 @@ class Linear_model(nn.Module):
         ##  Formerly:
         ##  return torch.sigmoid(y_hat)
 
-        print(y_hat.size())
+        ##  The below is a modified Laplace CDF.
 
         return 0.5 * torch.exp(-torch.abs(y_hat - self.laplace_mu) / self.laplace_b)
-
-        # batch_laplace_mu = torch.full(original.shape, self.laplace_mu)
-
-        # # print(self.laplace_mu)
-
-        # if y_hat <= self.laplace_mu:
-
-        #     return 0.5 * exp((y_hat - self.laplace_mu) / self.laplace_b)
-
-        # else:
-
-        #     return 0.5 * exp((self.laplace_mu - y_hat) / self.laplace_b)
-
-        # lpdf_y_hat = torch.tensor(
-        #     1 / (2 * self.laplace_b)) * torch.exp(
-        #         -torch.div(
-        #             torch.abs(y_hat - self.laplace_mu),
-        #             self.laplace_b)
-        #     )
-
-        # return lpdf_y_hat
-
