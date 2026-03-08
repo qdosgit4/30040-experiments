@@ -2,6 +2,7 @@
 
 import argparse
 import time
+from datetime import datetime
 
 import torch
 from torch import nn
@@ -11,10 +12,7 @@ from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
 from mini_model_reparam import Linear_model
-# from optimiser_sgd_reparam import SGD_reparam
 
-
-##  TODO HANDLE ARGS FOR CBDL
 
 ##  Initialisation.
 
@@ -22,14 +20,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--neurons-n',
                     required = True,
                     type = int,
-                    help = 'Quantity of n neurons in 1-n-n-1 network. Try 512, or 1024.')
+                    help = 'Quantity of n neurons in 1-n-n-1 network. 512, or 1024 recommended.')
 parser.add_argument('--batch-n',
                     required = True,
                     type = int,
                     help = 'Size of batch from dataset during training/testing. 256 recommended.')
 parser.add_argument('--laplace-b',
                     required = False,
-                    default = 0.025,
+                    default = 0.018,
                     type = float,
                     help = 'Laplace constant to use as likelihood model.')
 parser.add_argument('--mu-init',
@@ -80,7 +78,7 @@ def main():
         args.rho_init
     ).to(device)
 
-    # --- DATA PARALLEL CHANGE START ---
+    ##  Ensure multiple GPUs used if available.
     
     if torch.cuda.device_count() > 1:
         
@@ -88,8 +86,6 @@ def main():
         
         model = nn.DataParallel(model, device_ids=[0, 1])
         
-    # --- DATA PARALLEL CHANGE END ---
-
     ##  Save model params to plaintext.
     
     with open("model_params_weight_mu_pre.txt", "w") as f:
@@ -108,6 +104,8 @@ def main():
     ##  Set quantity of training epochs.
 
     epochs = 20
+
+    ##  Train either for fixed period of time or fixed quantity of epochs.
 
     start_time = time.time()
     # while time.time() - start_time < 300:
@@ -134,6 +132,16 @@ def main():
 
         state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
         f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
+
+    ##  Generate timestamp and store weights for later loading back.
+
+    now = datetime.now()
+
+    timestamp = now.strftime("%Y%m%d_%H%M%S")
+
+    filename = f"model_weights_{timestamp}.pth"
+        
+    torch.save(model.state_dict(), 'model_weights.pth')
     
 
 def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
@@ -225,11 +233,11 @@ def test(dl: DataLoader, model: nn.Module, loss_fn: nn.Module):
             
             X, y = X.to(device), y.to(device)
             
-            pred = model(X)
+            y_hat = model(X)
             
-            test_loss += loss_fn(pred, y).item()
+            test_loss += loss_fn(y_hat, y).item()
             
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            correct += (y_hat.argmax(1) == y).type(torch.float).sum().item()
             
     test_loss /= len(dl)
     

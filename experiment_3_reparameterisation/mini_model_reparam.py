@@ -9,6 +9,8 @@ from linear_layer_reparam_v2 import Linear_reparam_gaussian
 class Linear_model(nn.Module):
     
     def __init__(self, n: int, l_mu: float, l_b: float, w_mu: float, w_rho: float):
+
+        ##  n = neurons in 1-n-n-1 network
         
         super().__init__()
 
@@ -21,8 +23,7 @@ class Linear_model(nn.Module):
             nn.ReLU(),
             Linear_reparam_gaussian(n, n),
             nn.ReLU(),
-            Linear_reparam_gaussian(n, 1),
-            nn.Sigmoid()
+            Linear_reparam_gaussian(n, 1)
         )
 
         ##  Non-probabilistic equivalent:
@@ -44,13 +45,24 @@ class Linear_model(nn.Module):
 
         y_hat = self.linear_relu_stack(x)
 
-        if y_hat < self.laplace_mu:
+        ##  Formerly:
+        ##  return torch.sigmoid(y_hat)
 
-            return 0.5 * exp((y_hat - self.laplace_mu) / self.laplace_b)
+        print(y_hat.size())
 
-        else:
+        return 0.5 * torch.exp(-torch.abs(y_hat - self.laplace_mu) / self.laplace_b)
 
-            return 1 - 0.5 * exp(-(y_hat - self.laplace_mu) / self.laplace_b)
+        # batch_laplace_mu = torch.full(original.shape, self.laplace_mu)
+
+        # # print(self.laplace_mu)
+
+        # if y_hat <= self.laplace_mu:
+
+        #     return 0.5 * exp((y_hat - self.laplace_mu) / self.laplace_b)
+
+        # else:
+
+        #     return 0.5 * exp((self.laplace_mu - y_hat) / self.laplace_b)
 
         # lpdf_y_hat = torch.tensor(
         #     1 / (2 * self.laplace_b)) * torch.exp(
