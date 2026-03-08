@@ -45,6 +45,10 @@ class Linear_model(nn.Module):
 
         y_hat = self.linear_relu_stack(x)
 
+        return 0.5 + 0.5 * torch.sign(x) * (1 - torch.exp(-torch.abs(x) / safe_b))
+
+        return torch.sigmoid(y_hat)
+
         ##  Formerly:
         ##  return torch.sigmoid(y_hat)
 
