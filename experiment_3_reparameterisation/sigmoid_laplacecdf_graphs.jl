@@ -21,7 +21,6 @@ y_laplace = cdf.(laplace_dist, x) # Broadcast the CDF function
 p = plot(x, y_sigmoid, 
      label="Sigmoid", 
      linewidth=2, 
-     title="Comparison between Sigmoid and Laplace CDF",
      legend=:bottomright)
 
 plot!(x, y_laplace, 
