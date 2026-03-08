@@ -21,15 +21,14 @@ y_laplace = cdf.(laplace_dist, x) # Broadcast the CDF function
 p = plot(x, y_sigmoid, 
      label="Sigmoid", 
      linewidth=2, 
-     title="Comparison: Sigmoid vs. Laplace CDF",
+     title="Comparison between Sigmoid and Laplace CDF",
      legend=:bottomright)
 
 plot!(x, y_laplace, 
-      label="Laplace CDF (μ=0, b=1)", 
-      linewidth=2, 
-      linestyle=:dash)
+      label="Laplace CDF", 
+      linewidth=2)
 
 xlabel!("x")
-ylabel!("Probability / Output")
+ylabel!("Probability")
 
 savefig("plot.pdf")
