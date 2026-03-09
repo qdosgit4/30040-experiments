@@ -120,7 +120,7 @@ def main():
         
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    filename = f"model_weights_{args.weights_name.replace(' ', '-')}_batch_{args.batch_n}_epochs_{training_epochs}_{timestamp}.pth"
+    filename = f"model_weights_{args.weights_name.replace(' ', '-')}_batch_{args.batch_n}_epochs_{args.training_epochs}_{timestamp}.pth"
         
     torch.save(model.state_dict(), filename)
     
