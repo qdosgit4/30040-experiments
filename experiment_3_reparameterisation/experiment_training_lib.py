@@ -91,13 +91,15 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
 
         ##  Calculate error of prediction.
 
+        loss_res = loss(y_hat, y)
+
         try:
             loss_res = loss(y_hat, y)
 
         except:
             print("ERROR:", y_hat, y)
         
-        ##  Compute gradients numerically via backpropagation, back to
+        ##  compute gradients numerically via backpropagation, back to
         ##  leaf nodes of graph.
         
         loss_res.backward()
