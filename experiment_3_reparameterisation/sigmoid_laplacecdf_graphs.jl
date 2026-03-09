@@ -8,7 +8,7 @@ using Distributions
 sigmoid(x) = 1 / (1 + exp(-x))
 
 # Laplace CDF with mu=0, b=1
-laplace_dist = Laplace(0.0, 1.0)
+laplace_dist = Laplace(0.0, 0.018)
 
 # 2. Create the x range
 x = -6:0.05:6
@@ -30,4 +30,4 @@ plot!(x, y_laplace,
 xlabel!("x")
 ylabel!("Probability")
 
-savefig("plot.pdf")
+savefig("sigmoid_laplace_cdf.pdf")
