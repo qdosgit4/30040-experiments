@@ -1,6 +1,7 @@
 # mypy: allow-untyped-defs
 
-##  Layer extracted from PyTorch library.
+##  Layer extracted from PyTorch library, edits inspired by
+##  bayesian-torch library.
 
 import math
 from typing import Any
@@ -62,7 +63,7 @@ class Linear_reparam_gaussian(Module):
         # self.sigma_weight = Parameter(torch.empty(out_features,
         #                                         in_features, **factory_kwargs))
 
-        self.register_buffer('eps_weight', torch.empty(out_features,
+        self.register_buffer('weight_eps', torch.empty(out_features,
                                                         in_features,
                                                         **factory_kwargs),
                                                         persistent=False)
@@ -85,7 +86,7 @@ class Linear_reparam_gaussian(Module):
         
             self.bias_rho = Parameter(torch.empty(out_features, **factory_kwargs))
             
-            self.register_buffer('eps_bias',
+            self.register_buffer('bias_eps',
                                  torch.empty(out_features, in_features, **factory_kwargs),
                                  persistent=False)
 
@@ -105,7 +106,7 @@ class Linear_reparam_gaussian(Module):
             
             self.register_parameter("bias_rho", None, **factory_kwargs)
             
-            self.register_buffer('eps_bias', None, persistent=False)
+            self.register_buffer('bias_eps', None, persistent=False)
 
             self.register_buffer('prior_bias_mu', None, persistent=False)
             
@@ -150,7 +151,6 @@ class Linear_reparam_gaussian(Module):
             init.uniform_(self.bias, -bound, bound)
 
 
-
     def kl_loss(self):
         
         init.uniform_(self.weight_mu, a = - w_mu_init, b = w_mu_init)
@@ -186,8 +186,6 @@ class Linear_reparam_gaussian(Module):
 
     def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
 
-        sigma_weight = torch.log1p(torch.exp(self.rho_weight))
-
         kl = torch.log(sigma_p) - torch.log(sigma_q) + (
             sigma_q**2 + (mu_q - mu_p)**2) / (2 * (sigma_p**2)
                                               ) - 0.5
@@ -195,17 +193,47 @@ class Linear_reparam_gaussian(Module):
         return kl.mean()
 
             
-    def forward(self, input: Tensor) -> Tensor:
+    def forward(self, input: Tensor, return_kl = True) -> Tensor:
 
-        self.eps_weight = self.eps_weight.data.normal_(mean = 0, std = 1)
+        sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
-        self.eps_bias = self.eps_bias.data.normal_(mean = 0, std = 0.3)
+        self.weight_eps = self.weight_eps.data.normal_(mean = 0, std = 1)
 
-        # self.eps_weight = torch.abs(self.eps_weight)
+        self.bias_eps = self.bias_eps.data.normal_(mean = 0, std = 1)
+
+        # self.weight_eps = torch.abs(self.weight_eps)
         
-        return F.linear(input,
-                        self.weight_mu + torch.log1p(torch.exp(self.weight_rho)) * self.eps_weight,
-                        self.bias) ### + torch.log1p(torch.exp(self.bias_rho)) * self.eps_bias)
+        layer_out = F.linear(input,
+                        self.weight_mu + torch.log1p(torch.exp(self.weight_rho)) * self.weight_eps,
+                        self.bias) ### + torch.log1p(torch.exp(self.bias_rho)) * self.bias_eps)
+
+        if return_kl:
+
+            kl = self.kl_div(self.mu_weight,
+                             sigma_weight,
+                             self.prior_weight_mu,
+                             self.prior_weight_sigma)
+            
+            if self.mu_bias is not None:
+
+                ##  Generate bias parameter via epsilon.
+            
+                sigma_bias = torch.log1p(torch.exp(self.rho_bias))
+                
+                bias = self.bias_mu + (bias_sigma * self.eps_bias.data.normal_())
+
+                ##  Generate KL loss value related to current bias
+                ##  approximation distribution, prior distribution.
+            
+                if return_kl:
+                    kl  += self.kl_div(self.bias_mu, bias_sigma, self.prior_bias_mu,
+                                       self.prior_bias_sigma)
+                
+            return layer_out, kl
+
+        else:
+
+            return layer_out
 
     
     def extra_repr(self) -> str:
