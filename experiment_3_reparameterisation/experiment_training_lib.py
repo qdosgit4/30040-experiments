@@ -171,39 +171,41 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
 
             y_hat_rounded = torch.round(y_hat)
 
-            y_hat_y_stacked = torch.stack((y_hat, y), dim=0)
+            # y_hat_y_stacked = torch.stack((y_hat, y), dim=0)
 
-            print(y_hat)
+            # print(y_hat)
 
-            print(y)
+            # print(y)
 
-            tp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 1)).sum().item()
+            # print(y_hat_y_stacked[0], y_hat_y_stacked[1])
 
-            fp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 0)).sum().item()
+            # tp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 1)).sum().item()
 
-            fn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 1)).sum().item()
+            # fp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 0)).sum().item()
 
-            tn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 0)).sum().item()
+            # fn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 1)).sum().item()
+
+            # tn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 0)).sum().item()
 
             ##  Prevent divide-by-zero errors.
 
             eps = 1e-8
 
-            precision = tp / (tp + fp + eps)
+            # precision = tp / (tp + fp + eps)
 
-            recall = tp / (tp + fn + eps)
+            # recall = tp / (tp + fn + eps)
 
-            f1 = 2 / ((1 / (precision + eps)) + (1 / (recall + eps)) + eps)
+            # f1 = 2 / ((1 / (precision + eps)) + (1 / (recall + eps)) + eps)
             
             test_loss += loss(y_hat, y).item()
             
-            correct += (y_hat.argmax(1) == y).type(torch.float).sum().item()
+            # correct += (y_hat.argmax(1) == y).type(torch.float).sum().item()
                     
     test_loss /= len(dl)
     
-    correct /= len(dl.dataset)
+    # correct /= len(dl.dataset)
     
-    print(f"Accuracy: {test_loss:>8f}")
+    print(f"{test_loss:>8f}")
 
     print(tp, fp, fn, tn)
 
