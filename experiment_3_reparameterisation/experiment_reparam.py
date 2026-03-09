@@ -25,11 +25,11 @@ parser.add_argument('--batch-n',
                     required = True,
                     type = int,
                     help = 'Size of batch from dataset during training/testing. 256 recommended.')
-parser.add_argument('--laplace-b',
+parser.add_argument('--sigmoid-k',
                     required = False,
                     default = 0.018,
                     type = float,
-                    help = 'Laplace constant to use as likelihood model.')
+                    help = 'Initial Sigmoid parameter to use as likelihood model.')
 parser.add_argument('--mu-init',
                     required = False,
                     default = 0.25,
@@ -72,8 +72,7 @@ def main():
 
     model = Linear_model(
         args.neurons_n,
-        3.14159,
-        args.laplace_b,
+        args.sigmoid_k,
         args.mu_init,
         args.rho_init
     ).to(device)

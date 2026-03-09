@@ -8,16 +8,14 @@ from linear_layer_reparam_v2 import Linear_reparam_gaussian
 
 class Linear_model(nn.Module):
     
-    def __init__(self, n: int, l_mu: float, l_b: float, w_mu: float, w_rho: float):
+    def __init__(self, n: int, s_k: float, w_mu: float, w_rho: float):
 
         ##  n = neurons in 1-n-n-1 network
         
         super().__init__()
 
-        self.laplace_mu = l_mu
-
-        self.laplace_b = l_b
-
+        self.sigmoid_k = nn.Parameter(torch.tensor([s_k]))
+        
         self.linear_relu_stack = nn.Sequential(
             Linear_reparam_gaussian(1, n, w_mu_init = w_mu, w_rho_init = w_rho),
             nn.ReLU(),
@@ -43,15 +41,18 @@ class Linear_model(nn.Module):
 
     def forward(self, x: torch.Tensor):
 
+        b_pos = torch.abs(self.laplace_b) + self.eps
+
         y_hat = self.linear_relu_stack(x)
 
-        return 0.5 + 0.5 * torch.sign(x) * (1 - torch.exp(-torch.abs(x) / safe_b))
 
-        return torch.sigmoid(y_hat)
+        # return 0.5 + 0.5 * torch.sign(x) * (1 - torch.exp(-torch.abs(x) / safe_b))
+
+        # return torch.sigmoid(y_hat)
 
         ##  Formerly:
         ##  return torch.sigmoid(y_hat)
 
         ##  The below is a modified Laplace CDF.
 
-        return 0.5 * torch.exp(-torch.abs(y_hat - self.laplace_mu) / self.laplace_b)
+        # return 0.5 * torch.exp(-torch.abs(y_hat - self.laplace_mu) / self.laplace_b)
