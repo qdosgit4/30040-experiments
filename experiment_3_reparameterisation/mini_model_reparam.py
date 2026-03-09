@@ -21,6 +21,7 @@ class Linear_model(nn.Module):
             nn.ReLU(),
             Linear_reparam_gaussian(n, 1),
             Parameterised_sigmoid(s_k)
+            # nn.Sigmoid()
         )
 
         ##  Non-probabilistic equivalent:
@@ -41,3 +42,7 @@ class Linear_model(nn.Module):
     def forward(self, x: torch.Tensor):
 
         return self.linear_relu_stack(x)
+    
+        ##  Add insignificant value as BCE loss function's logarithm rejects 0 as input.
+        
+        return self.linear_relu_stack(x) + 1e-7
