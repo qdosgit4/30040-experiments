@@ -30,7 +30,7 @@ echo "Job is using $SLURM_GPUS GPU(s) with ID(s) $CUDA_VISIBLE_DEVICES and $SLUR
 
 ##  Load data from scratch to $TMPDIR/
 
-cp ~/scratch/xfer/* $TMPDIR/
+cp ~/scratch/30040_experiments/experiment_3_reparameterisation/* $TMPDIR/
 
 echo $TMPDIR
 cd $TMPDIR

@@ -24,7 +24,7 @@ module load apps/binapps/pytorch/2.6.0-312-gpu-cu124
 
 echo "Job is using $SLURM_GPUS GPU(s) with ID(s) $CUDA_VISIBLE_DEVICES and $SLURM_NTASKS CPU core(s)"
 
-cp ~/scratch/xfer/* $TMPDIR/
+cp ~/scratch/30040_experiments/experiment_3_reparameterisation/* $TMPDIR/
 
 echo $TMPDIR
 cd $TMPDIR
