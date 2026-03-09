@@ -45,3 +45,4 @@ python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 128 --training-
 ##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/#nvme
 
 cp $TMPDIR/model_weights* ~/scratch/weights/
+
