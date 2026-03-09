@@ -11,7 +11,7 @@ sigmoid(x) = 1 / (1 + exp(-x))
 laplace_dist = Laplace(0.0, 0.018)
 
 # 2. Create the x range
-x = -6:0.05:6
+x = -2:0.01:2
 
 # 3. Calculate values
 y_sigmoid = sigmoid.(x)          # Broadcast over the array
