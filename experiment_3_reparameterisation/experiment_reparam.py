@@ -18,22 +18,32 @@ from experiment_training_lib import run_training_loop
 ##  Initialisation.
 
 parser = argparse.ArgumentParser()
+
 parser.add_argument('--neurons-n',
                     required = True,
                     type = int,
                     help = 'Quantity of n neurons in 1-n-n-1 network. 512, or 1024 recommended.')
+
 parser.add_argument('--batch-n',
                     required = True,
                     type = int,
                     help = 'Size of batch from dataset during training/testing. 256 recommended.')
+
+parser.add_argument('--training-epochs',
+                    required = True,
+                    type = int,
+                    help = 'Quantity of training epochs to run.')
+
 parser.add_argument('--weights-name',
                     required = False,
                     type = str,
                     help = 'Name to append to stored weights filename.')
+
 parser.add_argument('--weights-load',
                     required = False,
                     type = str,
                     help = 'Name to append to stored weights filename.')
+
 parser.add_argument('--sigmoid-k',
                     required = False,
                     default = 1,
@@ -106,7 +116,7 @@ def main():
 
         print("Training initialised.")
 
-        run_training_loop(model, train_dl, test_dl, 1)
+        run_training_loop(model, train_dl, test_dl, args.training_epochs)
 
     ##  Generate timestamp and store weights for later loading back.
         
