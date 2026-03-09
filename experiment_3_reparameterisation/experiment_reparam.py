@@ -25,6 +25,14 @@ parser.add_argument('--batch-n',
                     required = True,
                     type = int,
                     help = 'Size of batch from dataset during training/testing. 256 recommended.')
+parser.add_argument('--weights-name',
+                    required = False,
+                    type = str,
+                    help = 'Name to append to stored weights filename.')
+parser.add_argument('--weights-load',
+                    required = False,
+                    type = str,
+                    help = 'Name to append to stored weights filename.')
 parser.add_argument('--sigmoid-k',
                     required = False,
                     default = 0.018,
@@ -84,63 +92,71 @@ def main():
         print(f"Using {torch.cuda.device_count()} GPUs!")
         
         model = nn.DataParallel(model, device_ids=[0, 1])
+
+    ##  Either load weights or skip.
+
+    if args.weights_load is not None:
         
-    ##  Save model params to plaintext.
-    
-    with open("model_params_weight_mu_pre.txt", "w") as f:
+        state_dict = torch.load(args.weights_load, weights_only=True)
 
-        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
-        f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
+    else:
 
-    ##  Define loss.
+        ##  Save model params to plaintext.
 
-    loss = nn.BCELoss()
+        with open("model_params_weight_mu_pre.txt", "w") as f:
 
-    ##  Define parameter optimisation mechanism.
+            state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+            f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+        ##  Define loss.
 
-    ##  Set quantity of training epochs.
+        loss = nn.BCELoss()
 
-    epochs = 20
+        ##  Define parameter optimisation mechanism.
 
-    ##  Train either for fixed period of time or fixed quantity of epochs.
+        optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
-    start_time = time.time()
-    # while time.time() - start_time < 300:
+        ##  Set quantity of training epochs.
 
-    ##  Run train-test sequence.
-    
-    for t in range(epochs):
+        epochs = 20
 
-        print(f"Training...")
+        ##  Train either for fixed period of time or fixed quantity of epochs.
 
-        train(train_dataloader, model, loss, optimizer)
+        start_time = time.time()
+        # while time.time() - start_time < 300:
 
-        print(f"Testing...")
+        ##  Run train-test sequence.
 
-        test(test_dataloader, model, loss)
+        for t in range(epochs):
 
-    print(f"{time.time() - start_time}s")
-    
-    # print(model.state_dict())
+            print(f"Training...")
 
-    ##  Save model params to plaintext.
-    
-    with open("model_params_weight_mu_pre.txt", "w") as f:
+            train(train_dataloader, model, loss, optimizer)
 
-        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
-        f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
+            print(f"Testing...")
 
-    ##  Generate timestamp and store weights for later loading back.
+            test(test_dataloader, model, loss)
 
-    now = datetime.now()
+        print(f"{time.time() - start_time}s")
+
+        # print(model.state_dict())
+
+        ##  Save model params to plaintext.
+
+        with open("model_params_weight_mu_pre.post", "w") as f:
+
+            state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+            f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
+
+        ##  Generate timestamp and store weights for later loading back.
+
+        now = datetime.now()
 
     timestamp = now.strftime("%Y%m%d_%H%M%S")
 
-    filename = f"model_weights_{timestamp}.pth"
+    filename = f"model_weights_{args.weights_name.replace(' ', '-')}_{timestamp}.pth"
         
-    torch.save(model.state_dict(), 'model_weights.pth')
+    torch.save(model.state_dict(), filename)
     
 
 def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
