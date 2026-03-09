@@ -38,7 +38,7 @@ pwd
 
 ##  Run experiment.
 
-python3 $TMPDIR/experiment_reparam.py --neurons_n 1024 --batch_n 1024 --training-epochs 1 --weights-name "alt_batch_1024_epochs_1" 
+python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 1024 --training-epochs 1 --weights-name "alt_batch_1024_epochs_1" 
 
 ##  Load weights back.
 
