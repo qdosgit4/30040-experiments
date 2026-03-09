@@ -25,6 +25,7 @@ def run_training_loop(model, train_dataloader, test_dataloader):
     with open("model_params_weight_mu_pre.txt", "w") as f:
 
         state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+        
         f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
 
     ##  Define loss.
@@ -71,6 +72,7 @@ def run_training_loop(model, train_dataloader, test_dataloader):
     with open("model_params_weight_mu_pre.post", "w") as f:
 
         state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+        
         f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
 
 
@@ -170,19 +172,35 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
             X, y = X.to(device), y.to(device)
             
             y_hat = model(X)
+
+            y_hat_rounded = torch.round(y_hat)
+
+            y_hat_y_stacked = torch.stack((y_hat, y), dim=0)
+
+            tp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 1)).sum().item()
+
+            fp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 0)).sum().item()
+
+            fn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 1)).sum().item()
+
+            tn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 0)).sum().item()
+
+            precision = tp / (tp + fp)
+
+            recall = tp / (tp + fn)
+
+            f1 = 2 / ((1 / precision) + (1 / recall))
             
-            try:
-                test_loss += loss(y_hat, y).item()
+            test_loss += loss(y_hat, y).item()
             
-                correct += (y_hat.argmax(1) == y).type(torch.float).sum().item()
-            
-            except:
-                print("ERROR:", y_hat, y)
-        
+            correct += (y_hat.argmax(1) == y).type(torch.float).sum().item()
+                    
     test_loss /= len(dl)
     
     correct /= len(dl.dataset)
     
-    print(f"{test_loss:>8f}")
+    print(f"Accuracy: {test_loss:>8f}")
+
+    print(f"F1: {f1:>8f}")
 
 
