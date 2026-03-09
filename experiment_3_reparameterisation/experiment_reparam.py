@@ -106,8 +106,6 @@ def main():
 
     ##  Either load weights or skip.
 
-    print(args.weights_load)
-
     if args.weights_load is not None:
         
         state_dict = torch.load(args.weights_load, weights_only=True)

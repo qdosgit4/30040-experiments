@@ -1,7 +1,7 @@
 #!/bin/bash --login
 
 ### Choose ONE of the following partitions depending on your permitted access
-#SBATCH -p gpuA              # A100 (80GB) GPUs  [up to 12 CPU cores per GPU permitted]
+#SBATCH -p gpuL              # L40S GPUs
 
 ##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/
 
@@ -38,12 +38,10 @@ pwd
 
 ##  Run experiment.
 
-python3 $TMPDIR/experiment_reparam.py --neurons_n 1024 --batch_n 256 --weights-name "reparam_set" --training-epochs 1
+python3 $TMPDIR/experiment_reparam.py --neurons_n 1024 --batch_n 1024 --training-epochs 1 --weights-name "alt_batch_1024_epochs_1" 
 
 ##  Load weights back.
 
 ##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/#nvme
 
 cp $TMPDIR/model_weights* ~/scratch/weights/
-
-
