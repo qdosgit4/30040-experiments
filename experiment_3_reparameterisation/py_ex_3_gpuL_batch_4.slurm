@@ -1,7 +1,9 @@
 #!/bin/bash --login
 
 ### Choose ONE of the following partitions depending on your permitted access
-#SBATCH -p gpuA              # A100 (80GB) GPUs  [up to 12 CPU cores per GPU permitted]
+#SBATCH -p gpuL              # L40S GPUs
+
+##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/
 
 ### 2 GPUs of gpuA allowed
 ### ? GPUs of gpuL allowed
@@ -16,6 +18,8 @@
                              # See above for number of cores per GPU you can request.
                              # Also affects host RAM allocated to job unless --mem=num used.
 
+##  Load PyTorch, CUDA.
+
 module purge
 module load libs/cuda/12.8.1  # See below for specific versions
 module load apps/binapps/anaconda3/2019.07-numpy-fix
@@ -24,10 +28,20 @@ module load apps/binapps/pytorch/2.6.0-312-gpu-cu124
 
 echo "Job is using $SLURM_GPUS GPU(s) with ID(s) $CUDA_VISIBLE_DEVICES and $SLURM_NTASKS CPU core(s)"
 
+##  Load data from scratch to $TMPDIR/
+
 cp ~/scratch/30040_experiments/experiment_3_reparameterisation/* $TMPDIR/
 
 echo $TMPDIR
 cd $TMPDIR
 pwd
 
-python3 $TMPDIR/experiment_reparam.py --neurons_n 1024 --batch_n 1024
+##  Run experiment. Should take ~
+
+python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 4 --training-epochs 30 --weights-name "batch_4_epochs_1" 
+
+##  Load weights back.
+
+##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/#nvme
+
+cp $TMPDIR/model_weights* ~/scratch/weights/
