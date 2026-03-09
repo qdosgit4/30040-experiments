@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 from linear_layer_reparam_v2 import Linear_reparam_gaussian
-from sigmoid_para import Parameterised_sigmoid
+from sigmoid_param import Parameterised_sigmoid
 
 class Linear_model(nn.Module):
     
@@ -20,7 +20,7 @@ class Linear_model(nn.Module):
             Linear_reparam_gaussian(n, n),
             nn.ReLU(),
             Linear_reparam_gaussian(n, 1),
-            Parameterised_sigmoid(k)
+            Parameterised_sigmoid(s_k)
         )
 
         ##  Non-probabilistic equivalent:
