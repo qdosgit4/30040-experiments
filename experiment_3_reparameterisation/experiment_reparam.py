@@ -106,11 +106,11 @@ def main():
 
         print("Training initialised.")
 
-        run_training_loop(model, train_dl, test_dl)
+        run_training_loop(model, train_dl, test_dl, 1)
 
     ##  Generate timestamp and store weights for later loading back.
         
-    timestamp = now.strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     filename = f"model_weights_{args.weights_name.replace(' ', '-')}_{timestamp}.pth"
         

@@ -18,7 +18,7 @@ torch.manual_seed(239852)
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 
 
-def run_training_loop(model, train_dataloader, test_dataloader):
+def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoader, epochs: int):
 
     ##  Save model params to plaintext.
 
@@ -38,10 +38,6 @@ def run_training_loop(model, train_dataloader, test_dataloader):
 
     # while time.time() - start_time < 300:
 
-    ##  Set quantity of training epochs.
-
-    epochs = 20
-
     ##  Train either for fixed period of time or fixed quantity of epochs.
 
     start_time = time.time()
@@ -55,11 +51,11 @@ def run_training_loop(model, train_dataloader, test_dataloader):
 
         print(f"Training...")
 
-        train(train_dataloader, model, loss, optimizer)
+        train(train_dl, model, loss, optimizer)
 
         print(f"Testing...")
 
-        test(test_dataloader, model, loss)
+        test(test_dl, model, loss)
 
     ##  Output training time.
 
@@ -152,7 +148,7 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
             
             # current = (batch + 1) * len(X)
             
-            # print(f"[{current:>5d}/{len(train_dataloader.dataset):>5d}]")
+            # print(f"[{current:>5d}/{len(train_dl.dataset):>5d}]")
 
             # print(f"loss_1: {loss_1:>7f}  [{current:>5d}/{size:>5d}]")
 
@@ -177,6 +173,10 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
 
             y_hat_y_stacked = torch.stack((y_hat, y), dim=0)
 
+            print(y_hat)
+
+            print(y)
+
             tp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 1)).sum().item()
 
             fp = ((y_hat_y_stacked[0] == 1) & (y_hat_y_stacked[1] == 0)).sum().item()
@@ -185,11 +185,15 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
 
             tn = ((y_hat_y_stacked[0] == 0) & (y_hat_y_stacked[1] == 0)).sum().item()
 
-            precision = tp / (tp + fp)
+            ##  Prevent divide-by-zero errors.
 
-            recall = tp / (tp + fn)
+            eps = 1e-8
 
-            f1 = 2 / ((1 / precision) + (1 / recall))
+            precision = tp / (tp + fp + eps)
+
+            recall = tp / (tp + fn + eps)
+
+            f1 = 2 / ((1 / (precision + eps)) + (1 / (recall + eps)) + eps)
             
             test_loss += loss(y_hat, y).item()
             
@@ -200,6 +204,8 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
     correct /= len(dl.dataset)
     
     print(f"Accuracy: {test_loss:>8f}")
+
+    print(tp, fp, fn, tn)
 
     print(f"F1: {f1:>8f}")
 
