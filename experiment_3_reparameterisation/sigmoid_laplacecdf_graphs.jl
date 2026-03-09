@@ -19,35 +19,35 @@ laplace_dist_2 = Laplace(0.0, 1)
 
 ##  2. Create the x range
 
-x = -0.2:0.005:0.2
+x = -6:0.01:6
 
 ##  3. Calculate values
 
-y_sigmoid_reparam = sigmoid_param.(x, 75)  ##  Broadcast over the array
+# y_sigmoid_reparam = sigmoid_param.(x, 75)  ##  Broadcast over the array
 y_sigmoid = sigmoid.(x)  ##  Broadcast over the array
 
-y_laplace = cdf.(laplace_dist, x)  ##  Broadcast the CDF function
 y_laplace_2 = cdf.(laplace_dist_2, x)  ##  Broadcast the CDF function
+# y_laplace = cdf.(laplace_dist, x)  ##  Broadcast the CDF function
 
 ##  4. Generate the Plot
 
 p = plot(x, y_sigmoid, 
-     label="Parameterised Sigmoid (1)", 
+     label="Sigmoid", 
      linewidth=2, 
      legend=:bottomright)
 
-p = plot(x, y_sigmoid_reparam, 
-     label="Parameterised Sigmoid (75)", 
-     linewidth=2, 
-     legend=:bottomright)
+# p = plot(x, y_sigmoid_reparam, 
+#      label="Parameterised Sigmoid (75)", 
+#      linewidth=2, 
+#      legend=:bottomright)
 
 plot!(x, y_laplace_2, 
       label="Laplace CDF (0, 1)", 
       linewidth=2)
 
-plot!(x, y_laplace, 
-      label="Laplace CDF (0, 0.018)", 
-      linewidth=2)
+# plot!(x, y_laplace, 
+#       label="Laplace CDF (0, 0.018)", 
+#       linewidth=2)
 
 
 xlabel!("x")
