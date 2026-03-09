@@ -116,6 +116,8 @@ def main():
 
         optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
+        # while time.time() - start_time < 300:
+
         ##  Set quantity of training epochs.
 
         epochs = 20
@@ -123,8 +125,10 @@ def main():
         ##  Train either for fixed period of time or fixed quantity of epochs.
 
         start_time = time.time()
-        # while time.time() - start_time < 300:
+        ##  Output training start time.
 
+        print(datetime.now().strftime("%H:%M:%S"))
+        
         ##  Run train-test sequence.
 
         for t in range(epochs):
@@ -137,6 +141,8 @@ def main():
 
             test(test_dataloader, model, loss)
 
+        ##  Output training time.
+        
         print(f"{time.time() - start_time}s")
 
         # print(model.state_dict())
@@ -148,10 +154,8 @@ def main():
             state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
             f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
 
-        ##  Generate timestamp and store weights for later loading back.
-
-        now = datetime.now()
-
+    ##  Generate timestamp and store weights for later loading back.
+        
     timestamp = now.strftime("%Y%m%d_%H%M%S")
 
     filename = f"model_weights_{args.weights_name.replace(' ', '-')}_{timestamp}.pth"
