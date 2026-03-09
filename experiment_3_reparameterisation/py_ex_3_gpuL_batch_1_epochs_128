@@ -38,10 +38,11 @@ pwd
 
 ##  Run experiment. Should take ~
 
-python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 4 --training-epochs 30 --weights-name "batch_4_epochs_1" 
+python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 1 --training-epochs 128 --weights-name "experiment_3_epochs_test" 
 
 ##  Load weights back.
 
 ##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/#nvme
 
 cp $TMPDIR/model_weights* ~/scratch/weights/
+11;rgb:f6f6/f8f8/fafa

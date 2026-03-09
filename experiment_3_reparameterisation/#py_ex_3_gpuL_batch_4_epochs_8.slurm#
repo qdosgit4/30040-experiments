@@ -36,9 +36,9 @@ echo $TMPDIR
 cd $TMPDIR
 pwd
 
-##  Run experiment.
+##  Run experiment. Should take ~
 
-python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 256 --training-epochs 1 --weights-name "batch_256_epochs_1" 
+python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 4 --training-epochs 8 --weights-name "" 
 
 ##  Load weights back.
 

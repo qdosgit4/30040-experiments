@@ -36,12 +36,13 @@ echo $TMPDIR
 cd $TMPDIR
 pwd
 
-##  Run experiment.
+##  Run experiment. Should take ~
 
-python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 128 --training-epochs 1 --weights-name "TEMPLATE!" 
+python3 $TMPDIR/experiment_reparam.py --neurons-n 1024 --batch-n 1 --training-epochs 8 --weights-name "experiment_3_epochs_test" 
 
 ##  Load weights back.
 
 ##  https://ri.itservices.manchester.ac.uk/csf3/batch-slurm/gpu-jobs-slurm/#nvme
 
 cp $TMPDIR/model_weights* ~/scratch/weights/
+11;rgb:f6f6/f8f8/fafa
