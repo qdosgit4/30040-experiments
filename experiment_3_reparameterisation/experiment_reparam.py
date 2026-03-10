@@ -129,6 +129,8 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
                            )
 
     old_state_dict = checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint
+
+    print(old_state_dict)
     
     ##  Fix naming scheme and load module.
 
@@ -148,15 +150,13 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
                 shuffle = False
     )
     
-    outputs = []
-
     with torch.no_grad():
 
         all_tensors = []
 
         for i in range(2):
 
-            outputs = []
+            outputs_set = []
             
             for batch, (X,) in enumerate(dl):
 
@@ -170,15 +170,17 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
 
                 # print(y_hat)
 
-                outputs.append(y_hat.squeeze(0))
+                outputs_set.append(y_hat.squeeze(0))
 
-            inner_tensor = torch.stack(inner_list, dim=0)
+            inner_tensor = torch.stack(outputs_set, dim=0)
 
             all_tensors.append(inner_tensor)
 
-        final_tensor = torch.stack(all_outputs, dim=0)
+            # print(all_tensors)
 
-        print(final_tensor)
+        final_tensor = torch.stack(all_tensors, dim=0)
+
+        # print(final_tensor)
 
             
 
