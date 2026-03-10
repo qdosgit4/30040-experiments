@@ -186,13 +186,24 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
 
             plt.figure(figsize=(6, 4))
 
-            plt.scatter(
+            plt.plot(
                         x, y,
-                        color='black',          # point colour
-                        edgecolor='black',          # optional border around each marker
-                        s=60,                       # marker size
-                        label='Samples'
+                        marker='o',
+                        markersize=4,          # small dots
+                        markerfacecolor='black',
+                        markeredgecolor='black',
+                        linewidth=0.8,         # thin connecting line
+                        color='black',
+                        label='Trajectory'
             )
+
+            # plt.scatter(
+            #             x, y,
+            #             color='black',          # point colour
+            #             edgecolor='black',          # optional border around each marker
+            #             s=10,                       # marker size
+            #             label='Samples'
+            # )
             
             plt.xlabel('Input value')
             plt.ylabel('Probability of π classification')
@@ -204,7 +215,7 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
 
             plt.tight_layout()
 
-            plt.savefig('pi_probabilities_128_epoch.pdf', dpi=300)
+            plt.savefig('pi_probabilities_1_epoch.pdf', dpi=300)
             plt.close()      
 
 
