@@ -59,8 +59,8 @@ class Linear_reparam_gaussian(Module):
         self.weight_rho = Parameter(torch.empty(out_features,
                                                 in_features, **factory_kwargs))
 
-        self.weight_sigma = Parameter(torch.empty(out_features,
-                                                in_features, **factory_kwargs))
+        # self.weight_sigma = Parameter(torch.empty(out_features,
+        #                                         in_features, **factory_kwargs))
 
         self.register_buffer('weight_eps', torch.empty(out_features,
                                                         in_features,
@@ -106,11 +106,13 @@ class Linear_reparam_gaussian(Module):
         
         init.uniform_(self.weight_rho, a = w_rho_init, b = w_rho_init)
         
-        init.uniform_(self.weight_sigma, a = w_rho_init, b = w_rho_init)
+        # init.uniform_(self.weight_sigma, a = 0.00672, b = 0.00672)
         
         init.uniform_(self.bias_mu, a = b_rho_init, b = b_rho_init)
         
         init.uniform_(self.bias_rho, a = b_rho_init, b = b_rho_init)
+
+        # print(torch.log1p(torch.exp(self.weight_rho)))
         
         # init.uniform_(self.bias_sigma, a = rho_init, b = rho_init)
         
@@ -140,10 +142,13 @@ class Linear_reparam_gaussian(Module):
 
         self.bias_eps = self.bias_eps.data.normal_(mean = 0, std = 0.3)
 
+        # print(self.weight_sigma)
+
         # self.weight_eps = torch.abs(self.weight_eps)
         
         return F.linear(input,
-                        self.weight_mu + self.weight_sigma * self.weight_eps,
+                        self.weight_mu + torch.log1p(torch.exp(self.weight_rho)) * self.weight_eps,
+                        # self.weight_mu + self.weight_sigma * self.weight_eps,
                         self.bias)
                         # self.bias_mu + torch.log1p(torch.exp(self.bias_rho)) * self.bias_eps)
 

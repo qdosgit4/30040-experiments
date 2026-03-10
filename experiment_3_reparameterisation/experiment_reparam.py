@@ -137,7 +137,7 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
     ##  Fix naming scheme and load module.
 
     model.load_state_dict(
-                {k.replace('module.', '', 1): v for k, v in old_state_dict.items()}
+                {k.replace('module.', '', 1).replace('mu_bias', 'bias_mu'): v for k, v in old_state_dict.items()}
     )
 
     res = []
@@ -154,9 +154,9 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
     
     with torch.no_grad():
 
-        all_tensors = []
+        # all_tensors = []
 
-        for i in range(2):
+        # for i in range(1):
 
             outputs_set = []
             
@@ -170,17 +170,17 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
 
                 y_hat = model(X)
 
-                # print(y_hat)
+                print(X, y_hat)
 
-                outputs_set.append(y_hat.squeeze(0))
+                outputs_set.append((X.item(), y_hat.squeeze(0).item()))
 
-            inner_tensor = torch.stack(outputs_set, dim=0)
+            # inner_tensor = torch.stack(outputs_set, dim=0)
 
-            all_tensors.append(inner_tensor)
+            # all_tensors.append(inner_tensor)
 
             # print(all_tensors)
 
-        final_tensor = torch.stack(all_tensors, dim=0)
+        # final_tensor = torch.stack(all_tensors, dim=0)
 
         # print(final_tensor)
 

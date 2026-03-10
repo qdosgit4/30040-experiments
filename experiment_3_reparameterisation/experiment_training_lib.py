@@ -94,7 +94,9 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
 
         ##  Calculate error of prediction.
 
-        loss_res = loss(y_hat, y)
+        # loss_res = loss(y_hat, y)
+
+        print(y_hat)
 
         try:
             loss_res = loss(y_hat, y)
