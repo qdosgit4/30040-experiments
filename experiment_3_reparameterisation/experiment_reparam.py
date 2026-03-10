@@ -208,14 +208,11 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
             plt.xlabel('Input value')
             plt.ylabel('Probability of π classification')
             plt.grid(True, ls='--', lw=0.5, alpha=0.7)
-            plt.legend()
             plt.tight_layout()
-
-            plt.title('Probability Density Function')
 
             plt.tight_layout()
 
-            plt.savefig('pi_probabilities_1_epoch.pdf', dpi=300)
+            plt.savefig('pi_probabilities_128_epoch.pdf', dpi=300)
             plt.close()      
 
 
