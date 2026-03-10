@@ -59,10 +59,10 @@ class Linear_reparam_gaussian(Module):
         self.weight_rho = Parameter(torch.empty(out_features,
                                                 in_features, **factory_kwargs))
 
-        # self.sigma_weight = Parameter(torch.empty(out_features,
-        #                                         in_features, **factory_kwargs))
+        self.weight_sigma = Parameter(torch.empty(out_features,
+                                                in_features, **factory_kwargs))
 
-        self.register_buffer('eps_weight', torch.empty(out_features,
+        self.register_buffer('weight_eps', torch.empty(out_features,
                                                         in_features,
                                                         **factory_kwargs),
                                                         persistent=False)
@@ -71,13 +71,13 @@ class Linear_reparam_gaussian(Module):
                         
             self.bias = Parameter(torch.empty(out_features, **factory_kwargs))
             
-            self.mu_bias = Parameter(torch.empty(out_features, **factory_kwargs))
+            self.bias_mu = Parameter(torch.empty(out_features, **factory_kwargs))
         
             self.bias_rho = Parameter(torch.empty(out_features, **factory_kwargs))
             
-            # self.sigma_bias = Parameter(torch.empty(out_features, **factory_kwargs))
+            # self.bias_sigma = Parameter(torch.empty(out_features, **factory_kwargs))
             
-            self.register_buffer('eps_bias',
+            self.register_buffer('bias_eps',
                              torch.empty(out_features, in_features, **factory_kwargs),
                                  persistent=False)
 
@@ -85,13 +85,13 @@ class Linear_reparam_gaussian(Module):
             
             self.register_parameter("bias", None, **factory_kwargs)
             
-            self.register_parameter("mu_bias", None, **factory_kwargs)
+            self.register_parameter("bias_mu", None, **factory_kwargs)
             
             self.register_parameter("bias_rho", None, **factory_kwargs)
             
-            # self.register_parameter("sigma_bias", None, **factory_kwargs)
+            # self.register_parameter("bias_sigma", None, **factory_kwargs)
             
-            self.register_buffer('eps_bias', None, persistent=False)
+            self.register_buffer('bias_eps', None, persistent=False)
 
         self.reset_parameters(w_mu_init, w_rho_init, b_mu_init, b_rho_init)
 
@@ -102,47 +102,50 @@ class Linear_reparam_gaussian(Module):
  
         # init.constant_(self.weight_rho, rho_init)
  
-        # init.constant_(self.sigma_weight, rho_init)
- 
         init.uniform_(self.weight_mu, a = - w_mu_init, b = w_mu_init)
         
         init.uniform_(self.weight_rho, a = w_rho_init, b = w_rho_init)
         
+        init.uniform_(self.weight_sigma, a = rho_init, b = rho_init)
+        
+        init.uniform_(self.bias_mu, a = b_rho_init, b = b_rho_init)
+        
         init.uniform_(self.bias_rho, a = b_rho_init, b = b_rho_init)
         
-        # init.uniform_(self.sigma_weight, a = rho_init, b = rho_init)
+        # init.uniform_(self.bias_sigma, a = rho_init, b = rho_init)
         
         # init.kaiming_uniform_(self.weight_rho, a=math.sqrt(5))
 
         ##  Experiment 2 initialised the weight tensor via Kaiming,
         ##  then the bias via the weight tensor.
         
-        init.kaiming_uniform_(self.weight, a=math.sqrt(5))
+        # init.kaiming_uniform_(self.weight, a=math.sqrt(5))
         
-        if self.bias is not None:
+        # if self.bias is not None:
             
-            # init.constant_(self.mu_bias, mu_init)
+        #     # init.constant_(self.bias_mu, mu_init)
         
-            # init.constant_(self.bias_rho, rho_init)
+        #     # init.constant_(self.bias_rho, rho_init)
         
-            fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
+        #     fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
             
-            bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+        #     bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             
-            init.uniform_(self.bias, -bound, bound)
+        #     init.uniform_(self.bias, -bound, bound)
 
             
     def forward(self, input: Tensor) -> Tensor:
 
-        self.eps_weight = self.eps_weight.data.normal_(mean = 0, std = 1)
+        self.weight_eps = self.weight_eps.data.normal_(mean = 0, std = 1)
 
-        self.eps_bias = self.eps_bias.data.normal_(mean = 0, std = 0.3)
+        self.bias_eps = self.bias_eps.data.normal_(mean = 0, std = 0.3)
 
-        # self.eps_weight = torch.abs(self.eps_weight)
+        # self.weight_eps = torch.abs(self.weight_eps)
         
         return F.linear(input,
-                        self.weight_mu + torch.log1p(torch.exp(self.weight_rho)) * self.eps_weight,
-                        self.bias) ### + torch.log1p(torch.exp(self.bias_rho)) * self.eps_bias)
+                        self.weight_mu + self.weight_sigma * self.weight_eps,
+                        self.bias_mu + torch.log1p(torch.exp(self.bias_rho)) * self.bias_eps)
+                        # self.bias) ### + 
 
     
     def extra_repr(self) -> str:
