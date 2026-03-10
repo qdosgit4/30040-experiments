@@ -10,6 +10,8 @@ from torch.utils.data import DataLoader, TensorDataset
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
+import matplotlib.pyplot as plt
+
 from pi_dataset import Pi_dataset
 from mini_model_reparam import Linear_model
 
@@ -170,21 +172,37 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
 
                 y_hat = model(X)
 
-                print(X, y_hat)
+                print(X.item(), y_hat.item())
 
                 outputs_set.append((X.item(), y_hat.squeeze(0).item()))
-
+                
             # inner_tensor = torch.stack(outputs_set, dim=0)
 
             # all_tensors.append(inner_tensor)
 
             # print(all_tensors)
 
-        # final_tensor = torch.stack(all_tensors, dim=0)
+            x, y = zip(*outputs_set)
 
-        # print(final_tensor)
+            plt.figure(figsize=(6, 4))
 
-            
+            plt.plot(x, y, marker='o', linestyle='-', color='steelblue',
+                     label='Estimated PDF')
+
+            plt.fill_between(x, y, color='steelblue', alpha=0.2)
+
+            plt.xlabel('x')
+            plt.ylabel('Density')
+            plt.grid(True, which='both', ls='--', lw=0.5, alpha=0.7)
+            plt.legend()
+
+            plt.title('Probability Density Function')
+
+            plt.tight_layout()
+
+            plt.savefig('plot.pdf', dpi=300)
+            plt.close()      
+
 
     
 main()
