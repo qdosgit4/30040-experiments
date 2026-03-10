@@ -106,7 +106,7 @@ class Linear_reparam_gaussian(Module):
         
         init.uniform_(self.weight_rho, a = w_rho_init, b = w_rho_init)
         
-        init.uniform_(self.weight_sigma, a = rho_init, b = rho_init)
+        init.uniform_(self.weight_sigma, a = w_rho_init, b = w_rho_init)
         
         init.uniform_(self.bias_mu, a = b_rho_init, b = b_rho_init)
         
@@ -144,8 +144,8 @@ class Linear_reparam_gaussian(Module):
         
         return F.linear(input,
                         self.weight_mu + self.weight_sigma * self.weight_eps,
-                        self.bias_mu + torch.log1p(torch.exp(self.bias_rho)) * self.bias_eps)
-                        # self.bias) ### + 
+                        self.bias)
+                        # self.bias_mu + torch.log1p(torch.exp(self.bias_rho)) * self.bias_eps)
 
     
     def extra_repr(self) -> str:

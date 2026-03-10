@@ -114,6 +114,8 @@ def main():
                     shuffle=True
         )
 
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
         filename = f"model_weights_{args.weights_name.replace(' ', '-')}_batch_{args.batch_n}_epochs_{args.training_epochs}_{timestamp}.pth"
 
         run_training_loop(model, train_dl, test_dl, args.training_epochs, filename)

@@ -73,8 +73,6 @@ def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoad
 
     ##  Generate timestamp and store weights for later loading back.
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
     torch.save(model.state_dict(), filename)
 
 
