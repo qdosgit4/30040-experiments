@@ -17,7 +17,7 @@ for i in list(decimal_range('0.0625', '0.5', '0.0625')):
 
     ##  Training epochs loop.
 
-    epochs = 50
+    epochs = "50"
     
     new_filename = original_file.replace("01", str(epochs)).replace("02", udist)
 
