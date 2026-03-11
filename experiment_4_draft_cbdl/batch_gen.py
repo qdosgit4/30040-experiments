@@ -7,7 +7,7 @@ import numpy as np
 
 from decimal_range import decimal_range
 
-original_file = "py_ex_3_gpuL.slurm.epochs_udist_template"
+original_file = "py_ex_4_gpuL.slurm.epochs_01_udist_02"
 
 ##  Uniform distribution loop.
 
@@ -19,7 +19,7 @@ for i in list(decimal_range('-1.5', '1.5', '0.25')):
     
     for epochs in range(5, 5*5+1, 5):
 
-        new_filename = f"{original_file}.epochs_{epochs}_udist_{udist}"
+        new_filename = original_file.replace("01", str(epochs)).replace("02", udist)
     
         shutil.copy(original_file, new_filename)
 
