@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader, TensorDataset, Subset
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from pi_dataset import Pi_dataset
 from mini_model import Linear_model
@@ -116,6 +116,8 @@ def main():
     
 
 def run_utilisation_loop(model: nn.Module, weights_path: str):
+
+    ##  For loop here to iterate over all weights available.
 
     ##  Load weights.
 

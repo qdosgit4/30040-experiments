@@ -5,19 +5,7 @@ import os
 
 import numpy as np
 
-from decimal import Decimal
-
-def decimal_range(start, stop, step):
-    
-    start = Decimal(str(start))
-    stop = Decimal(str(stop))
-    step = Decimal(str(step))
-    
-    current = start
-    while current < stop:
-        yield current
-        current += step
-
+from decimal_range import decimal_range
 
 original_file = "py_ex_3_gpuL.slurm.epochs_udist_template"
 
