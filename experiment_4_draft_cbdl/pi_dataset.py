@@ -13,7 +13,7 @@ class Pi_dataset(Dataset):
 
             line_count = sum(1 for line in f)
 
-            print(line_count)
+            # print(line_count)
             
             self.data = torch.zeros((line_count, 1), dtype=torch.bfloat16)
 

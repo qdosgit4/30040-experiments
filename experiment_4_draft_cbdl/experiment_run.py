@@ -97,7 +97,7 @@ def main():
         train_dl = DataLoader(
                     Subset(
                         Pi_dataset("pi_dataset_40000.txt"),
-                        range(20000)
+                        range(40000)
                     ),
                     batch_size = args.batch_n,
                     shuffle=True
@@ -106,7 +106,7 @@ def main():
         test_dl = DataLoader(
                     Subset(
                         Pi_dataset("pi_dataset_8000.txt"),
-                        range(4000)
+                        range(8000)
                     ),
                     batch_size = args.batch_n,
                     shuffle=True
