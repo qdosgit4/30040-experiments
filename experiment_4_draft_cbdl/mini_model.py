@@ -5,7 +5,7 @@ from torch import nn
 
 class Linear_model(nn.Module):
     
-    def __init__(self, n: int, udist: [int, int]):
+    def __init__(self, n: int, udist: [int, int], random_seed: int):
         
         super().__init__()
         
@@ -17,14 +17,18 @@ class Linear_model(nn.Module):
             nn.Linear(n, 1)
         )
 
-        for layer in self.linear_relu_stack:
-            if isinstance(layer, nn.Linear):
-                nn.init.kaiming_normal_(layer.weight, mode='fan_in', nonlinearity='relu')
-                nn.init.constant_(layer.bias, 0)
+        if random_seed != 239852:
+
+            for layer in self.linear_relu_stack:
+                if isinstance(layer, nn.Linear):
+                    nn.init.kaiming_normal_(layer.weight, mode='fan_in', nonlinearity='relu')
+                    nn.init.constant_(layer.bias, 0)
+
+        else:
         
-        ##  nn.init.uniform_(self.linear_relu_stack[0].weight, a=-udist[0], b=udist[1])
-        ##  nn.init.uniform_(self.linear_relu_stack[2].weight, a=-udist[0], b=udist[1])
-        ##  nn.init.uniform_(self.linear_relu_stack[4].weight, a=-udist[0], b=udist[1])
+            nn.init.uniform_(self.linear_relu_stack[0].weight, a=-udist[0], b=udist[1])
+            nn.init.uniform_(self.linear_relu_stack[2].weight, a=-udist[0], b=udist[1])
+            nn.init.uniform_(self.linear_relu_stack[4].weight, a=-udist[0], b=udist[1])
         
 
     def forward(self, x: torch.Tensor):

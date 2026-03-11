@@ -3,8 +3,6 @@
 import shutil
 import os
 
-import numpy as np
-
 from decimal_range import decimal_range
 
 original_file = "py_ex_4_gpuL.slurm.epochs_01_udist_02"
