@@ -17,7 +17,7 @@ class Linear_model(nn.Module):
             nn.Linear(n, 1)
         )
 
-        for layer in model:
+        for layer in self.linear_relu_stack:
             if isinstance(layer, nn.Linear):
                 nn.init.kaiming_normal_(layer.weight, mode='fan_in', nonlinearity='relu')
                 nn.init.constant_(layer.bias, 0)
