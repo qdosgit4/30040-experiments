@@ -54,7 +54,7 @@ parser.add_argument('--uniform-init',
 
 parser.add_argument('--random-seed',
                     required = False,
-                    default = 1,
+                    default = 239852,
                     type = int,
                     help = 'Random seed to use, such as when initialising weights, shuffling data.')
 

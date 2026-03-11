@@ -11,25 +11,25 @@ original_file = "py_ex_4_gpuL.slurm.epochs_01_udist_02"
 
 ##  Uniform distribution loop.
 
-for i in list(decimal_range('0.0625', '0.625', '0.0625')):
+for i in list(decimal_range('0.0625', '0.5', '0.0625')):
 
     udist = str(i)
 
     ##  Training epochs loop.
+
+    epochs = 50
     
-    for epochs in range(5, 5*5+1, 5):
+    new_filename = original_file.replace("01", str(epochs)).replace("02", udist)
 
-        new_filename = original_file.replace("01", str(epochs)).replace("02", udist)
-    
-        shutil.copy(original_file, new_filename)
+    shutil.copy(original_file, new_filename)
 
-        with open(new_filename, 'r') as f:
+    with open(new_filename, 'r') as f:
 
-            content = f.read()
+        content = f.read()
 
-        edited_content = content.replace("EPOCHS", str(epochs)).replace("UDIST", udist)
+    edited_content = content.replace("EPOCHS", str(epochs)).replace("UDIST", udist)
 
-        with open(new_filename, 'w') as f:
+    with open(new_filename, 'w') as f:
 
-            f.write(edited_content)
+        f.write(edited_content)
 
