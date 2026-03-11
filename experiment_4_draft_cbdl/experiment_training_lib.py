@@ -20,14 +20,6 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 
 def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoader, epochs: int, filename: str):
 
-    ##  Save model params to plaintext.
-
-    with open("model_params_weight_mu_pre.txt", "w") as f:
-
-        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
-        
-        f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
-
     ##  Define loss.
 
     loss = nn.BCELoss()
@@ -65,11 +57,11 @@ def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoad
 
     ##  Save model params to plaintext.
 
-    with open("model_params_weight_mu_pre.post", "w") as f:
+    with open("model_params.post", "w") as f:
 
         state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
         
-        f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
+        f.write(str(state_dict))
 
     ##  Generate timestamp and store weights for later loading back.
 
@@ -94,9 +86,7 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
 
         ##  Calculate error of prediction.
 
-        # loss_res = loss(y_hat, y)
-
-        print(y_hat)
+        # print(y_hat)
 
         try:
             loss_res = loss(y_hat, y)

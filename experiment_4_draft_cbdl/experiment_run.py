@@ -13,7 +13,7 @@ from torchvision.transforms import ToTensor
 import matplotlib.pyplot as plt
 
 from pi_dataset import Pi_dataset
-from mini_model_reparam import Linear_model
+from mini_model import Linear_model
 
 from experiment_training_lib import run_training_loop
 
@@ -65,11 +65,15 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 
 def main():
 
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    filename = f"model_weights_batch_{args.batch_n}_epochs_{args.training_epochs}_udist_{args.uniform_init}"
+
     ##  Define model.
 
     model = Linear_model(
                 args.neurons_n,
-                float(args.uniform_init),
+                (args.uniform_init, args.uniform_init),
     ).to(device)
 
     ##  Ensure multiple GPUs used if available.
@@ -88,13 +92,7 @@ def main():
 
     else:
 
-        ##  Load up data.
-
-        batch_size_pi = args.batch_n
-
-        limited_dataset = Subset(dataset, range())
-
-        ##  Cut back training data to induce epistemic uncertainty.
+        ##  Load up limited training data to induce epistemic uncertainty.
 
         train_dl = DataLoader(
                     Subset(
@@ -107,16 +105,12 @@ def main():
 
         test_dl = DataLoader(
                     Subset(
-                        Pi_dataset("pi_dataset_80000.txt"),
+                        Pi_dataset("pi_dataset_8000.txt"),
                         range(4000)
                     ),
                     batch_size = args.batch_n,
                     shuffle=True
         )
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        filename = f"model_weights_{args.weights_name.replace(' ', '-')}_batch_{args.batch_n}_epochs_{args.training_epochs}_{timestamp}.pth"
 
         run_training_loop(model, train_dl, test_dl, args.training_epochs, filename)
     

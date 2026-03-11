@@ -5,7 +5,7 @@ from torch import nn
 
 class Linear_model(nn.Module):
     
-    def __init__(self, n: int, u_dist: [int, int]):
+    def __init__(self, n: int, udist: [int, int]):
         
         super().__init__()
         
@@ -17,9 +17,9 @@ class Linear_model(nn.Module):
             nn.Linear(n, 1)
         )
 
-        nn.init.uniform_(self.linear_relu_stack[0].weight, a=-u_dist[0], b=u_dist[1])
-        nn.init.uniform_(self.linear_relu_stack[2].weight, a=-u_dist[0], b=u_dist[1])
-        nn.init.uniform_(self.linear_relu_stack[4].weight, a=-u_dist[0], b=u_dist[1])
+        nn.init.uniform_(self.linear_relu_stack[0].weight, a=-udist[0], b=udist[1])
+        nn.init.uniform_(self.linear_relu_stack[2].weight, a=-udist[0], b=udist[1])
+        nn.init.uniform_(self.linear_relu_stack[4].weight, a=-udist[0], b=udist[1])
         
 
     def forward(self, x: torch.Tensor):
