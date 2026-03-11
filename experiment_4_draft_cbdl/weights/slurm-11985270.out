@@ -1,0 +1,27 @@
+Loading apps/binapps/pytorch/2.6.0-312-gpu-cu124
+  Loading requirement: apps/binapps/anaconda3/2024.10
+Job is using 2 GPU(s) with ID(s) 0,1 and 1 CPU core(s)
+/tmp/slurm.11985270
+/tmp/slurm.11985270
+neurons_n: 1024
+batch_n: 1024
+training_epochs: 20
+weights_name: None
+weights_load: None
+uniform_init: -0.5
+Traceback (most recent call last):
+  File "/tmp/slurm.11985270/experiment_run.py", line 214, in <module>
+    main()
+  File "/tmp/slurm.11985270/experiment_run.py", line 74, in main
+    model = Linear_model(
+            ^^^^^^^^^^^^^
+  File "/tmp/slurm.11985270/mini_model.py", line 20, in __init__
+    nn.init.uniform_(self.linear_relu_stack[0].weight, a=-udist[0], b=udist[1])
+  File "/opt/apps/apps/binapps/pytorch/2.6.0/python3.12/gpu-cuda12.4/lib/python3.12/site-packages/torch/nn/init.py", line 166, in uniform_
+    return _no_grad_uniform_(tensor, a, b, generator)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/apps/apps/binapps/pytorch/2.6.0/python3.12/gpu-cuda12.4/lib/python3.12/site-packages/torch/nn/init.py", line 17, in _no_grad_uniform_
+    return tensor.uniform_(a, b, generator=generator)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: uniform_ expects to return a [from, to) range, but found from=0.5 > to=-0.5
+cp: cannot stat '/tmp/slurm.11985270/model_weights*': No such file or directory

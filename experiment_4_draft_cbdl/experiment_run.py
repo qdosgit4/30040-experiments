@@ -48,9 +48,15 @@ parser.add_argument('--weights-load',
 
 parser.add_argument('--uniform-init',
                     required = False,
-                    default = 1,
+                    default = 0.5,
                     type = float,
                     help = 'Initial value to set all model parameters to, as tuple.')
+
+parser.add_argument('--random-seed',
+                    required = False,
+                    default = 1,
+                    type = int,
+                    help = 'Random seed to use, such as when initialising weights, shuffling data.')
 
 args = parser.parse_args()
 
@@ -58,7 +64,7 @@ for key, value in vars(args).items():
             print(f"{key}: {value}")
 
 torch.set_default_dtype(torch.bfloat16)
-torch.manual_seed(239852)
+torch.manual_seed(args.random_seed)
 
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 

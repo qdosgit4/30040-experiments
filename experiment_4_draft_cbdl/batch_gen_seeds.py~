@@ -11,7 +11,7 @@ original_file = "py_ex_4_gpuL.slurm.epochs_01_udist_02"
 
 ##  Uniform distribution loop.
 
-for i in list(decimal_range('-1.5', '1.5', '0.25')):
+for i in list(decimal_range('0.0625', '0.625', '0.0625')):
 
     udist = str(i)
 
