@@ -1,0 +1,16 @@
+Loading apps/binapps/pytorch/2.6.0-312-gpu-cu124
+  Loading requirement: apps/binapps/anaconda3/2024.10
+Job is using 2 GPU(s) with ID(s) 0,1 and 1 CPU core(s)
+cp: -r not specified; omitting directory '/mnt/iusers01/fse-ugpgt01/compsci01/x93125tp/scratch/30040_experiments/experiment_4_draft_cbdl/batch_jobs'
+cp: -r not specified; omitting directory '/mnt/iusers01/fse-ugpgt01/compsci01/x93125tp/scratch/30040_experiments/experiment_4_draft_cbdl/__pycache__'
+cp: -r not specified; omitting directory '/mnt/iusers01/fse-ugpgt01/compsci01/x93125tp/scratch/30040_experiments/experiment_4_draft_cbdl/weights'
+/tmp/slurm.12031966
+/tmp/slurm.12031966
+usage: experiment_run.py [-h] --neurons-n NEURONS_N --batch-n BATCH_N
+                         --training-epochs TRAINING_EPOCHS
+                         [--weights-name WEIGHTS_NAME]
+                         [--weights-load WEIGHTS_LOAD]
+                         [--uniform-init UNIFORM_INIT]
+                         [--random-seed RANDOM_SEED]
+experiment_run.py: error: argument --training-epochs: invalid int value: 'EPOCHS'
+cp: cannot stat '/tmp/slurm.12031966/model_weights*': No such file or directory
