@@ -10,7 +10,7 @@ for i in range(10):
 
     rseed = random.randint(1, 1000000)
 
-    epochs = str(150)
+    epochs = str(50)
 
     new_filename = original_file.replace("01", epochs).replace("02", str(rseed))
 
