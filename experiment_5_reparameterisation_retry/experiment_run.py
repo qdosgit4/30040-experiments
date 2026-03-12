@@ -11,7 +11,7 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
-from mini_model import Linear_model
+from mini_model_reparam import Linear_model
 
 from experiment_training_lib import run_training_loop
 from experiment_utilise_lib import run_utilisation_loop_once, run_utilisation_loop_batch
@@ -91,9 +91,7 @@ def main():
     ##  Define model.
 
     model = Linear_model(
-                args.neurons_n,
-                (args.uniform_init, args.uniform_init),
-                args.random_seed
+                args.neurons_n
     ).to(device)
 
     ##  Ensure multiple GPUs used if available.

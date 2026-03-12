@@ -3,24 +3,23 @@
 import torch
 from torch import nn
 
-from linear_layer_reparam_v3 import Linear_bayesian
+from linear_bayesian import Linear_bayesian
 # from sigmoid_param import Parameterised_sigmoid
 
 class Linear_model(nn.Module):
     
-    def __init__(self, n: int, s_k: float, w_mu: float, w_rho: float):
+    def __init__(self, n: int):
 
         ##  n = neurons in 1-n-n-1 network
         
         super().__init__()
 
         self.linear_relu_stack = nn.Sequential(
-            Linear_reparam_gaussian(1, n, w_mu_init = w_mu, w_rho_init = w_rho),
+            Linear_bayesian(1, n),
             nn.ReLU(),
-            Linear_reparam_gaussian(n, n),
+            Linear_bayesian(n, n),
             nn.ReLU(),
-            Linear_reparam_gaussian(n, 1),
-            # Parameterised_sigmoid(s_k)
+            Linear_bayesian(n, 1),
             nn.Sigmoid()
         )
 

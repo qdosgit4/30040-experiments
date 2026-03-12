@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.distributions as dist
+
 
 class Linear_bayesian(nn.Module):
     
@@ -9,9 +16,7 @@ class Linear_bayesian(nn.Module):
         
         self.out_features = out_features
 
-        # 1. Variational parameters (Mean and Rho)
-        
-        ##  We initialize rho around -3 to -5 so initial sigma is small
+        ##  Initialize rho approx -3 to -5 for small initial sigma.
         
         self.w_mu = nn.Parameter(torch.Tensor(out_features, in_features).normal_(0, 0.1))
         
@@ -42,23 +47,23 @@ class Linear_bayesian(nn.Module):
         
         b_sigma = F.softplus(self.b_rho)
 
-        ##  Sample approximation function based on Parameter objects.
+        ##  Setup approximation function via Parameter objects.
         
         q_w = dist.Normal(self.w_mu, w_sigma)
         
         q_b = dist.Normal(self.b_mu, b_sigma)
 
-        ##  PyTorch official reparameterisation implementation.
+        ##  Sample via PyTorch official reparameterisation implementation.
         
         w = q_w.rsample()
         
         b = q_b.rsample()
 
-        ##  Recalculate KL Divergence: KL(q||p).
+        ##  Recalculate KL divergence: KL(q || p).
         
-        kl_w = dist.kl_divergence(q_w, self.prior).sum()
+        kl_w = dist.kl_divergence(q_w, self.prior_w).sum()
         
-        kl_b = dist.kl_divergence(q_b, self.prior).sum()
+        kl_b = dist.kl_divergence(q_b, self.prior_b).sum()
         
         self.kl_loss = kl_w + kl_b
 

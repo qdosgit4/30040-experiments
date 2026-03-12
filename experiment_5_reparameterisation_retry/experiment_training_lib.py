@@ -11,11 +11,21 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 from pi_dataset import Pi_dataset
+# from custom_loss import BCELoss_plus_KL
 
 torch.set_default_dtype(torch.bfloat16)
 torch.manual_seed(239852)
 
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+
+
+def BCE_KL_loss(model, y_hat, y):
+
+    BCE = F.binary_cross_entropy(y_hat, y, reduction='sum')
+
+    total_kl = sum(layer.kl_loss for layer in model.modules() if hasattr(layer, 'kl_loss'))
+
+    return data_loss + (total_kl / num_batches)
 
 
 def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoader, epochs: int, filename: str):
@@ -88,10 +98,17 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
 
         # print(y_hat)
 
-        try:
-            loss_res = loss(y_hat, y)
+        total_kl = sum(layer.kl_loss for layer in model.modules() if hasattr(layer, 'kl_loss'))
+        
+        loss_res = loss(y_hat, y) + (total_kl / dl.batch_size)
+
+        try: 
+            
+            loss_res = loss(y_hat, y) + (total_kl / dl.batch_size) 
+
 
         except:
+
             print("ERROR:", y_hat, y)
         
         ##  compute gradients numerically via backpropagation, back to
@@ -102,6 +119,12 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
         ##  Iterate parameters.
         
         optimizer.step()
+
+        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+
+        torch.set_printoptions(precision=10, threshold=10000, linewidth=150)
+        
+        print(str(state_dict['linear_relu_stack.0.w_rho']))
 
         ##  Reset gradients within graph.
         
@@ -165,8 +188,14 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
             X, y = X.to(device), y.to(device)
             
             y_hat = model(X)
+            
+            total_kl = sum(layer.kl_loss for layer in model.modules() if hasattr(layer, 'kl_loss'))
+        
+            loss_res = loss(y_hat, y) + (total_kl / dl.batch_size)
 
-            test_loss += loss(y_hat, y).item()
+            test_loss += loss_res
+
+            # test_loss += loss(y_hat, y).item()
             
             # correct += (y_hat.argmax(1) == y).type(torch.float).sum().item()
                     
