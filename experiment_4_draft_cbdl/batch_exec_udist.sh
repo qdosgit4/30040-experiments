@@ -1,5 +1,5 @@
 #!/bin/bash
-mapfile -t files < <(ls -v *_kaiming_*)
+mapfile -t files < <(ls -v *_udist_*)
 
 for file in "${files[@]}"; do
     
