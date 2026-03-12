@@ -73,14 +73,13 @@ def main():
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    if args.random_seed != 239852
+    if args.random_seed != 239852:
 
         filename = f"model_weights_batch_{args.batch_n}_epochs_{args.training_epochs}_kaiming_{args.uniform_init}"
 
     else:
 
         filename = f"model_weights_batch_{args.batch_n}_epochs_{args.training_epochs}_udist_{args.uniform_init}"
-
 
 
     ##  Define model.
@@ -223,7 +222,6 @@ def run_utilisation_loop(model: nn.Module, weights_path: str):
 
             plt.savefig('pi_probabilities_128_epoch.pdf', dpi=300)
             plt.close()      
-
 
     
 main()
