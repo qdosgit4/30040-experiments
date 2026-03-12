@@ -75,7 +75,7 @@ def main():
 
     if args.random_seed != 239852:
 
-        filename = f"model_weights_batch_{args.batch_n}_epochs_{args.training_epochs}_kaiming_{args.uniform_init}"
+        filename = f"model_weights_batch_{args.batch_n}_epochs_{args.training_epochs}_kaiming_{args.random_seed}"
 
     else:
 
