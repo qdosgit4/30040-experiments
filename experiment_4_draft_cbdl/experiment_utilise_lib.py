@@ -11,7 +11,7 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 torch.set_default_dtype(torch.bfloat16)
@@ -28,6 +28,8 @@ def run_utilisation_loop_batch(model: nn.Module, batch_name: str):
     # Find all files with batch_name in filename
     
     for file in directory.glob(f"model_weights*{batch_name}*xz"):
+
+        print(str(file))
         
         if file.is_file():
             
