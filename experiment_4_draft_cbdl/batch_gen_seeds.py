@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+11;rgb:f8f8/f8f8/f8f8
 import shutil
 import os
 
@@ -11,15 +11,17 @@ for i in range(10):
 
     rseed = random.randint(1, 1000000)
 
-    new_filename = original_file.replace("01", "50").replace("02", str(rseed))
+    epochs = str(150)
+
+    new_filename = original_file.replace("01", epochs).replace("02", str(rseed))
 
     shutil.copy(original_file, new_filename)
 
-    with open(new_filename, 'r') as f:
+    with open(original_file, 'r') as f:
 
         content = f.read()
 
-    edited_content = content.replace("EPOCHS", "50").replace("RSEED", str(rseed))
+    edited_content = content.replace("EPOCHS", epochs).replace("RSEED", str(rseed))
 
     with open(new_filename, 'w') as f:
 
