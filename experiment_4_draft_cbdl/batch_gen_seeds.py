@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-11;rgb:f8f8/f8f8/f8f8
 import shutil
 import os
 
