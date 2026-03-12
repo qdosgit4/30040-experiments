@@ -80,6 +80,7 @@ def main():
     model = Linear_model(
                 args.neurons_n,
                 (args.uniform_init, args.uniform_init),
+                args.random_seed
     ).to(device)
 
     ##  Ensure multiple GPUs used if available.
