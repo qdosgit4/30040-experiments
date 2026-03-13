@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader, TensorDataset, Subset
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-
 # import matplotlib.pyplot as plt
 
 
@@ -19,7 +18,7 @@ torch.set_default_dtype(torch.float32)
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 
 
-def run_utilisation_loop_batch(model: nn.Module, batch_name: str):
+def run_utilisation_loop_batch(model: nn.Module, batch_name: str, sample_quantity: int):
 
     print("loop batch")
 
@@ -43,10 +42,8 @@ def run_utilisation_loop_batch(model: nn.Module, batch_name: str):
             
             # Do something with the file
 
-    pass
 
-
-def run_utilisation_loop_once(model: nn.Module, weights_path: str, graph_filename: str):
+def run_utilisation_loop_once(model: nn.Module, weights_path: str, graph_filename: str, sample_quantity: int):
 
     ##  For loop here to iterate over all weights available.
 
@@ -101,8 +98,14 @@ def run_utilisation_loop_once(model: nn.Module, weights_path: str, graph_filenam
 
                 ##  Run X through model, generate prediction.
 
-                y_hat = model(X)
+                sample_set = ()
 
+                for _ in range(sample_quantity):
+
+                    sample_set = sample_set + (model(X),)
+
+                y_hat = torch.stack(sample_set).mean(dim=0)
+                    
                 print(X.item(), y_hat.item())
 
                 outputs_set.append((X.item(), y_hat.squeeze(0).item()))

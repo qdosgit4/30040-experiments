@@ -51,17 +51,17 @@ parser.add_argument('--weights-load-batch',
                     type = str,
                     help = 'Portion of filename to match, to iterate over a set of different model weights.')
 
-parser.add_argument('--uniform-init',
-                    required = False,
-                    default = 0.5,
-                    type = float,
-                    help = 'Initial value to set all model parameters to, as tuple.')
-
 parser.add_argument('--random-seed',
                     required = False,
                     default = 239852,
                     type = int,
                     help = 'Random seed to use, such as when initialising weights, shuffling data.')
+
+parser.add_argument('--sample_quantity',
+                    required = False,
+                    default = 10,
+                    type = int,
+                    help = 'Quantity of samples of θ to take during utilisation.')
 
 
 args = parser.parse_args()
@@ -102,13 +102,19 @@ def main():
 
     if args.weights_load is not None:
         
-        run_utilisation_loop(model,
-                             args.weights_load)
+        run_utilisation_loop_one(
+                    model,
+                    args.weights_load,
+                    args.sample_quantity
+        )
 
     elif args.weights_load_batch is not None:
 
-        run_utilisation_loop_batch(model,
-                                   args.weights_load_batch)
+        run_utilisation_loop_batch(
+                    model,
+                    args.weights_load_batch
+                    args.sample_quantity
+        )
 
     else:
 
