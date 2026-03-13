@@ -142,21 +142,23 @@ class Linear_reparam_gaussian(Module):
 
         self.bias_eps = self.bias_eps.data.normal_(mean = 0, std = 0.3)
 
-        weight_sigma = torch.log1p(torch.exp(self.weight_rho))
-
-        tmp_result = weight_sigma * self.weight_eps
+        weight_sigma = F.softplus(self.weight_rho)
         
-        weight = self.mu_weight + tmp_result
+        bias_sigma = F.softplus(self.bias_rho)
+
+        weight_epsilon = torch.randn_like(weight_sigma)
+        
+        bias_epsilon = torch.randn_like(bias_sigma)
+
+        weight = self.weight_mu + weight_sigma * weight_epsilon
+        
+        bias = self.bias_mu + bias_sigma * bias_epsilon
 
         # print(self.weight_sigma)
 
         # self.weight_eps = torch.abs(self.weight_eps)
         
-        return F.linear(input,
-                        weight,
-                        # self.weight_mu + self.weight_sigma * self.weight_eps,
-                        self.bias)
-                        # self.bias_mu + torch.log1p(torch.exp(self.bias_rho)) * self.bias_eps)
+        return F.linear(input, weight, bias)
 
     
     def extra_repr(self) -> str:

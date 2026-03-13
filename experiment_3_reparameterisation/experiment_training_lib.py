@@ -71,6 +71,12 @@ def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoad
         
         f.write(str(state_dict['linear_relu_stack.0.weight_mu']))
 
+    with open("model_params_weight_mu_pre.post", "w") as f:
+
+        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+        
+        f.write(str(state_dict['linear_relu_stack.0.weight_rho']))
+
     ##  Generate timestamp and store weights for later loading back.
 
     torch.save(model.state_dict(), filename)
@@ -96,7 +102,7 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
 
         # loss_res = loss(y_hat, y)
 
-        print(y_hat)
+        # print(y_hat)
 
         try:
             loss_res = loss(y_hat, y)
@@ -113,6 +119,10 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
         
         optimizer.step()
 
+        state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
+        
+        print(str(state_dict['linear_relu_stack.0.weight_rho']))
+        
         ##  Reset gradients within graph.
         
         optimizer.zero_grad()
