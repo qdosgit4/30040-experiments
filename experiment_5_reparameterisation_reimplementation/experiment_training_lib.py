@@ -130,13 +130,13 @@ def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
 
         ##  Calculate error of prediction.
 
-        print(model.kl_model_out())
+        print(model.kl_model_out(), loss(y_hat, y))
 
-        print(model.kl_model_out() / dl.batch_size)
+        print()
 
         try: 
             
-            loss_res = loss(y_hat, y) + model.kl_model_out() / dl.batch_size
+            loss_res = loss(y_hat, y) + model.kl()
 
         except:
 
@@ -220,7 +220,7 @@ def test(dl: DataLoader, model: nn.Module, loss: nn.Module):
             
             y_hat = model(X)
             
-            loss_res = loss(y_hat, y) - (calc_kl(model) / dl.batch_size)
+            loss_res = loss(y_hat, y) + model.kl()
 
             test_loss += loss_res
 

@@ -42,7 +42,7 @@ class Linear_model(nn.Module):
         # nn.init.uniform_(self.linear_relu_stack[4].weight, a=-0.25, b=0.25)
 
 
-    def kl_model_out(self):
+    def kl(self):
 
         return self.kl_model
         
@@ -59,11 +59,7 @@ class Linear_model(nn.Module):
 
         # print(kl_layers)
 
-        self.kl_model = sum(
-            kl_layers
-        ) / self.params_n
-
-        # print(self.model_kl)
+        self.kl_model = sum(kl_layers) / self.params_n
 
         return y_hat
     
