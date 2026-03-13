@@ -46,3 +46,5 @@ python3 $TMPDIR/experiment_run.py --neurons-n 1024 --batch-n 64 --weights-name 2
 
 cp $TMPDIR/model_weights* ~/scratch/weights/
 
+cp $TMPDIR/model_params.post ~/scratch/weights/
+
