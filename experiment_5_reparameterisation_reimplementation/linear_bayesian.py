@@ -26,6 +26,12 @@ class Linear_bayesian(nn.Module):
         
         self.b_rho = nn.Parameter(torch.Tensor(out_features).fill_(-3.0))
 
+        ##  sigma = log(1 + exp(rho))
+        
+        # w_sigma = F.softplus(self.w_rho)
+        
+        # b_sigma = F.softplus(self.b_rho)
+
         self.prior_w_sigma = prior_w_sigma
         
         self.prior_b_sigma = prior_b_sigma

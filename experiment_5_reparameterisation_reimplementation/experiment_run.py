@@ -57,7 +57,19 @@ parser.add_argument('--random-seed',
                     type = int,
                     help = 'Random seed to use, such as when initialising weights, shuffling data.')
 
-parser.add_argument('--sample_quantity',
+parser.add_argument('--sample-quantity',
+                    required = False,
+                    default = 10,
+                    type = int,
+                    help = 'Quantity of samples of θ to take during utilisation.')
+
+parser.add_argument('--rho-w-init',
+                    required = False,
+                    default = 10,
+                    type = int,
+                    help = 'Quantity of samples of θ to take during utilisation.')
+
+parser.add_argument('--rho-b-init',
                     required = False,
                     default = 10,
                     type = int,
@@ -87,7 +99,8 @@ def main():
     ##  Define model.
 
     model = Linear_model(
-                args.neurons_n
+                args.neurons_n,
+                args.
     ).to(device)
 
     ##  Ensure multiple GPUs used if available.
