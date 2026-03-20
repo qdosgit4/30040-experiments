@@ -16,6 +16,7 @@ from mini_model import Linear_model
 from experiment_training_lib import run_training_loop
 from experiment_utilise_lib import run_utilisation_loop_once, run_utilisation_loop_batch
 
+
 ##  Initialisation.
 
 parser = argparse.ArgumentParser()
@@ -62,6 +63,18 @@ parser.add_argument('--random-seed',
                     type = int,
                     help = 'Random seed to use, such as when initialising weights, shuffling data.')
 
+parser.add_argument('--w-rho-init',
+                    required = False,
+                    default = -3.0,
+                    type = float,
+                    help = 'Rho weight initialisation.')
+
+parser.add_argument('--b-rho-init',
+                    required = False,
+                    default = -3.0,,
+                    type = float,
+                    help = 'Rho bias initialisation.')
+
 args = parser.parse_args()
 
 for key, value in vars(args).items():
@@ -93,7 +106,9 @@ def main():
     model = Linear_model(
                 args.neurons_n,
                 (args.uniform_init, args.uniform_init),
-                args.random_seed
+                args.random_seed,
+                args.w_rho_init,
+                args.b_rho_init
     ).to(device)
 
     ##  Ensure multiple GPUs used if available.
@@ -141,3 +156,4 @@ def main():
 
 if __name__ == '__main__':
             main()
+

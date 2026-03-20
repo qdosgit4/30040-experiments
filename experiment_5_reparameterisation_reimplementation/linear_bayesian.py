@@ -7,8 +7,9 @@ import torch.distributions as dist
 
 
 class Linear_bayesian(nn.Module):
+
     
-    def __init__(self, in_features, out_features, prior_w_sigma = 1.0, prior_b_sigma = 1.0):
+    def __init__(self, in_features, out_features, w_rho_init = -3.0, b_rho_init = -3.0):
         
         super().__init__()
         
@@ -20,18 +21,14 @@ class Linear_bayesian(nn.Module):
         
         self.w_mu = nn.Parameter(torch.Tensor(out_features, in_features).normal_(0, 0.1))
         
-        self.w_rho = nn.Parameter(torch.Tensor(out_features, in_features).fill_(-3.0))
+        self.w_rho = nn.Parameter(torch.Tensor(out_features, in_features).fill_(w_rho_init))
         
         self.b_mu = nn.Parameter(torch.Tensor(out_features).normal_(0, 0.1))
         
-        self.b_rho = nn.Parameter(torch.Tensor(out_features).fill_(-3.0))
+        self.b_rho = nn.Parameter(torch.Tensor(out_features).fill_(b_rho_init))
 
         ##  sigma = log(1 + exp(rho))
         
-        # w_sigma = F.softplus(self.w_rho)
-        
-        # b_sigma = F.softplus(self.b_rho)
-
         self.prior_w_sigma = prior_w_sigma
         
         self.prior_b_sigma = prior_b_sigma
