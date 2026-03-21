@@ -8,7 +8,7 @@ from linear_bayesian import Linear_bayesian
 
 class Linear_model(nn.Module):
     
-    def __init__(self, n: int):
+    def __init__(self, n: int, rho_w_init: float, rho_b_init: float):
 
         ##  n = neurons in 1-n-n-1 network
         
