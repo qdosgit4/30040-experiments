@@ -6,21 +6,25 @@ import random
 
 original_file = "py_ex_5_gpuL_test.slurm.batch_01"
 
-for i in range(10, 17):
 
-    batch_n = str(2**i)
+with open(original_file, 'r') as f:
+                
+    content = f.read()
 
-    new_filename = original_file.replace("01", batch_n)
+    for j in range(1, 4):
 
-    shutil.copy(original_file, new_filename)
+        mu_rho_set = content.replace("MU_RHO_SET", str(-3 + j * 0.1))
 
-    with open(original_file, 'r') as f:
+        for k in range(1, 4):
 
-        content = f.read()
+            mu_b_rho_set = mu_rho_set.replace("B_RHO_SET", str(-3 + k * 0.1))
 
-    edited_content = content.replace("BATCH_N", batch_n)
+            batch_n = f"mrho_{j}_brho_{k}"
 
-    with open(new_filename, 'w') as f:
+            new_filename = original_file.replace("01", batch_n)
 
-        f.write(edited_content)
+            shutil.copy(original_file, new_filename)
 
+            with open(new_filename, 'w') as f:
+
+                f.write(mu_b_rho_set)

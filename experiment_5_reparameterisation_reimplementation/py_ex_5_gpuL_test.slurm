@@ -38,7 +38,7 @@ pwd
 
 ##  Run experiment.
 
-python3 $TMPDIR/experiment_run.py --neurons-n 1024 --batch-n 64 --weights-name 2677ac1 --training-epochs 16
+python3 $TMPDIR/experiment_run.py --neurons-n 1024 --batch-n 64 --weights-name 3902d0c --training-epochs 
 
 ##  Load weights back.
 
