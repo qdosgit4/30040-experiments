@@ -13,7 +13,7 @@ with open(original_file, 'r') as f:
 
     for j in range(1, 4):
 
-        mu_rho_set = content.replace("MU_RHO_SET", str(-3 + j * 0.1))
+        mu_rho_set = content.replace("MU_RHO_SET", str(-3 + j * 0.5))
 
         for k in range(1, 4):
 
@@ -21,10 +21,12 @@ with open(original_file, 'r') as f:
 
             batch_n = f"mrho_{j}_brho_{k}"
 
+            wname_mu_b_rho_set = mu_b_rho_set.replace("WNAME_SET", batch_n)
+
             new_filename = original_file.replace("01", batch_n)
 
             shutil.copy(original_file, new_filename)
 
             with open(new_filename, 'w') as f:
 
-                f.write(mu_b_rho_set)
+                f.write(wname_mu_b_rho_set)

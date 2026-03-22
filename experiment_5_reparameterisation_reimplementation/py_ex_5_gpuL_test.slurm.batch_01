@@ -38,7 +38,7 @@ pwd
 
 ##  Run experiment.
 
-python3 $TMPDIR/experiment_run.py --neurons-n 1024 --batch-n 64 --weights-name 3902d0c --training-epochs 6 --rho-w-init MU_RHO_SET --rho-b-init B_RHO_SET
+python3 $TMPDIR/experiment_run.py --neurons-n 1024 --batch-n 64 --weights-name WNAME_SET --training-epochs 6 --rho-w-init MU_RHO_SET --rho-b-init B_RHO_SET
 
 ##  Load weights back.
 
