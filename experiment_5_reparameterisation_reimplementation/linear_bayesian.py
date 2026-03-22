@@ -9,7 +9,7 @@ import torch.distributions as dist
 class Linear_bayesian(nn.Module):
 
     
-    def __init__(self, in_features, out_features, w_rho_init = -3.0, b_rho_init = -3.0):
+    def __init__(self, in_features, out_features, w_mu_init = -0.05, b_mu_init = -0.05, w_rho_init = -3.0, b_rho_init = -3.0):
         
         super().__init__()
         
@@ -19,23 +19,29 @@ class Linear_bayesian(nn.Module):
 
         ##  Initialize rho approx -3 to -5 for small initial sigma.
         
-        self.w_mu = nn.Parameter(torch.Tensor(out_features, in_features).normal_(0, 0.1))
+        self.w_mu = nn.Parameter(torch.Tensor(out_features, in_features).fill_(w_mu_init))
         
         self.w_rho = nn.Parameter(torch.Tensor(out_features, in_features).fill_(w_rho_init))
         
-        self.b_mu = nn.Parameter(torch.Tensor(out_features).normal_(0, 0.1))
+        self.b_mu = nn.Parameter(torch.Tensor(out_features).fill_(b_mu_init))
         
         self.b_rho = nn.Parameter(torch.Tensor(out_features).fill_(b_rho_init))
 
         ##  sigma = log(1 + exp(rho))
+
+        self.register_buffer(
+            "prior_w_sigma",
+            F.softplus(torch.Tensor(out_features, in_features).fill_(w_rho_init))
+        )
         
-        self.prior_w_sigma = prior_w_sigma
+        self.register_buffer(
+            "prior_b_sigma",
+            F.softplus(torch.Tensor(out_features, in_features).fill_(b_rho_init))
+        )
         
-        self.prior_b_sigma = prior_b_sigma
+        self.prior_w = dist.Normal(0, self.prior_w_sigma)
         
-        self.prior_w = dist.Normal(0, prior_w_sigma)
-        
-        self.prior_b = dist.Normal(0, prior_b_sigma)
+        self.prior_b = dist.Normal(0, self.prior_b_sigma)
         
         self.kl_loss = 0
 

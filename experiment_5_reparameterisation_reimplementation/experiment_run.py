@@ -65,26 +65,26 @@ parser.add_argument('--sample-quantity',
 
 parser.add_argument('--mu-w-init',
                     required = False,
-                    default = 10,
-                    type = int,
+                    default = -0.05,
+                    type = float,
                     help = 'Quantity of samples of θ to take during utilisation.')
 
 parser.add_argument('--mu-b-init',
                     required = False,
-                    default = 10,
-                    type = int,
+                    default = -0.05,
+                    type = float,
                     help = 'Quantity of samples of θ to take during utilisation.')
 
 parser.add_argument('--rho-w-init',
                     required = False,
-                    default = 10,
-                    type = int,
+                    default = -3.0,
+                    type = float,
                     help = 'Quantity of samples of θ to take during utilisation.')
 
 parser.add_argument('--rho-b-init',
                     required = False,
-                    default = 10,
-                    type = int,
+                    default = -3.0,
+                    type = float,
                     help = 'Quantity of samples of θ to take during utilisation.')
 
 
@@ -112,8 +112,10 @@ def main():
 
     model = Linear_model(
                 args.neurons_n,
+                args.mu_w_init,
+                args.mu_b_init,
                 args.rho_w_init,
-                args.rho_b_init
+                args.rho_b_init,
     ).to(device)
 
     ##  Ensure multiple GPUs used if available.
@@ -138,7 +140,7 @@ def main():
 
         run_utilisation_loop_batch(
                     model,
-                    args.weights_load_batch
+                    args.weights_load_batch,
                     args.sample_quantity
         )
 

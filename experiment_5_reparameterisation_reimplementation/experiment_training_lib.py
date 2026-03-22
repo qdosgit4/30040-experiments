@@ -113,7 +113,9 @@ def run_training_loop(model : nn.Module, train_dl: DataLoader, test_dl: DataLoad
 
 
 
-def train(dl: DataLoader, model: nn.Module, loss: nn.Module,
+def train(dl: DataLoader,
+          model: nn.Module,
+          loss: nn.Module,
           optimizer: torch.optim.Optimizer):
 
     ##  Put model into training mode; ensures gradient tracking.
